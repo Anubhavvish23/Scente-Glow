@@ -1,0 +1,22 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap");
+
+:root {
+  --sg-cream: #ede6da;
+  --sg-cream-light: #f3ece0;
+  --sg-cream-dark: #d9d0c0;
+  --sg-ink: #2b2620;
+  --sg-gold: #a98a5b;
+  --sg-gold-light: #c9a876;
+  --sg-font: "Cormorant Garamond", "Times New Roman", serif;
+  --hero-image: url("/homepage.png");
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.sg-main {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}

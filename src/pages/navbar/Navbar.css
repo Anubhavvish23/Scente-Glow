@@ -1,0 +1,140 @@
+.sg-navbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background: linear-gradient(to bottom, var(--sg-cream), var(--sg-cream-dark));
+  border-bottom: 1px solid rgba(43, 38, 32, 0.12);
+  font-family: var(--sg-font);
+  transition: box-shadow 0.3s ease, padding 0.3s ease;
+}
+
+.sg-navbar--scrolled {
+  box-shadow: 0 6px 18px rgba(43, 38, 32, 0.12);
+}
+
+.sg-navbar__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 48px;
+}
+
+.sg-navbar__logo {
+  font-size: 1.7rem;
+  letter-spacing: 0.08em;
+  color: var(--sg-ink);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.sg-navbar__links {
+  display: flex;
+  gap: 44px;
+}
+
+.sg-navbar__links a {
+  position: relative;
+  color: var(--sg-ink);
+  text-decoration: none;
+  font-size: 0.95rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding-bottom: 4px;
+}
+
+.sg-navbar__links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 1px;
+  background: var(--sg-gold);
+  transition: width 0.3s ease;
+}
+
+.sg-navbar__links a:hover::after {
+  width: 100%;
+}
+
+.sg-navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.sg-navbar__icon {
+  position: relative;
+  background: none;
+  border: none;
+  color: var(--sg-ink);
+  cursor: pointer;
+  display: flex;
+}
+
+.sg-navbar__badge {
+  position: absolute;
+  top: -8px;
+  right: -9px;
+  background: var(--sg-gold);
+  color: #fff;
+  font-size: 0.6rem;
+  font-family: sans-serif;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sg-navbar__burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.sg-navbar__burger span {
+  width: 24px;
+  height: 1.5px;
+  background: var(--sg-ink);
+}
+
+@media (max-width: 860px) {
+  .sg-navbar__links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--sg-cream);
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    padding: 28px 0;
+    transform: translateY(-12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+
+  .sg-navbar__links--open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sg-navbar__burger {
+    display: flex;
+  }
+
+  .sg-navbar__inner {
+    padding: 18px 24px;
+  }
+}
