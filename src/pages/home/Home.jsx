@@ -1,10 +1,11 @@
-import React from "react";
 import { Link } from "react-router-dom";
+import ShopSection from "../shop/ShopSection";
 import "./Home.css";
+import "../shop/Shop.css";
 
-const Home = () => {
+function Home() {
   return (
-    <main className="sg-home">
+    <div className="sg-home">
       <section className="sg-hero">
         <div className="sg-hero__bg" />
         <div className="sg-hero__overlay" />
@@ -21,8 +22,10 @@ const Home = () => {
           </Link>
         </div>
       </section>
-    </main>
+
+      <ShopSection embedded />
+    </div>
   );
-};
+}
 
 export default Home;
