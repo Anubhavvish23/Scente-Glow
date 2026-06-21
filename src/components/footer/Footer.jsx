@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import "./Footer.css";
 
+const whatsapp_url = "https://wa.me/917406903913";
+
 function Footer() {
   const current_year = new Date().getFullYear();
 
@@ -31,11 +33,22 @@ function Footer() {
           <div>
             <h4 className="sg-footer__heading">Connect</h4>
             <div className="sg-footer__links-col">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://www.instagram.com/scenteglow"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Instagram
               </a>
-              <a href="https://pinterest.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://www.pinterest.com/scenteglow"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Pinterest
+              </a>
+              <a href={whatsapp_url} target="_blank" rel="noopener noreferrer">
+                WhatsApp · +91 74069 03913
               </a>
               <a href="mailto:hello@scenteglow.com">hello@scenteglow.com</a>
             </div>
@@ -43,12 +56,18 @@ function Footer() {
         </div>
 
         <div className="sg-footer__brand">
-          <h2 className="sg-footer__brand-text">ScenteGlow</h2>
+          <Link to="/" className="sg-footer__logo-link">
+            <img
+              src="/logo.png"
+              alt="Scenté Glow Candle"
+              className="sg-footer__logo"
+            />
+          </Link>
         </div>
 
         <div className="sg-footer__bottom">
           <p className="sg-footer__copy">
-            &copy; {current_year} ScenteGlow Candle Atelier. All rights reserved.
+            &copy; {current_year} Scenté Glow Candle Atelier. All rights reserved.
           </p>
           <div className="sg-footer__legal">
             <Link to="/contact">Privacy</Link>

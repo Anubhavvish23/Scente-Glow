@@ -1,19 +1,42 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { fetch_products } from "../../api/products";
+import ProductPricing from "../../components/pricing/ProductPricing";
+import ShopSkeleton from "../../components/shop/ShopSkeleton";
+import EmptyState from "../../components/empty/EmptyState";
+import { useProductSheet } from "../../context/ProductSheetContext";
+import { useIsMobile } from "../../hooks/useIsMobile";
 import "./Shop.css";
 
 function ProductCard({ product }) {
   const [hovered, set_hovered] = useState(false);
+  const { open_product_sheet } = useProductSheet();
+  const is_mobile = useIsMobile();
+  const navigate = useNavigate();
+
+  const handle_click = () => {
+    if (is_mobile) {
+      open_product_sheet(product.id);
+    } else {
+      navigate(`/product/${product.id}`);
+    }
+  };
 
   return (
-    <Link
-      to={`/product/${product.id}`}
+    <button
+      type="button"
       className="sg-shop__card"
       onMouseEnter={() => set_hovered(true)}
       onMouseLeave={() => set_hovered(false)}
+      onClick={handle_click}
     >
       <div className="sg-shop__card-media">
+        {product.rating && (
+          <span className="sg-shop__card-rating">
+            <span className="sg-shop__card-rating-star">★</span>
+            {Number(product.rating).toFixed(1)}
+          </span>
+        )}
         <img
           src={product.img}
           alt={product.name}
@@ -29,10 +52,14 @@ function ProductCard({ product }) {
         <div>
           <h3 className="sg-shop__card-name">{product.name}</h3>
           <p className="sg-shop__card-scent">{product.scent}</p>
+          <ProductPricing
+            price={product.price}
+            original_price={product.original_price}
+            compact
+          />
         </div>
-        <span className="sg-shop__card-price">${product.price}</span>
       </div>
-    </Link>
+    </button>
   );
 }
 
@@ -40,6 +67,8 @@ function ShopSection({ embedded = false }) {
   const [products, set_products] = useState([]);
   const [loading, set_loading] = useState(true);
   const [search_query, set_search_query] = useState("");
+  const { product_id } = useProductSheet();
+  const sheet_open = Boolean(product_id);
 
   useEffect(() => {
     fetch_products()
@@ -89,6 +118,9 @@ function ShopSection({ embedded = false }) {
                 placeholder="Search by name or scent..."
                 value={search_query}
                 onChange={(e) => set_search_query(e.target.value)}
+                tabIndex={sheet_open ? -1 : 0}
+                readOnly={sheet_open}
+                aria-hidden={sheet_open}
               />
             </label>
           </div>
@@ -102,13 +134,25 @@ function ShopSection({ embedded = false }) {
 
       <section className="sg-shop__grid-section">
         {loading ? (
-          <div className="sg-shop__loading">
-            <div className="sg-shop__spinner" />
-          </div>
+          <ShopSkeleton count={embedded ? 4 : 8} />
         ) : filtered_products.length === 0 ? (
-          <p className="sg-shop__empty">
-            {query ? "No candles match your search." : "No candles available yet. Check back soon."}
-          </p>
+          <EmptyState
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M20 20l-4-4" />
+              </svg>
+            }
+            title={query ? "No matches found" : "No candles yet"}
+            description={
+              query
+                ? "Try a different name or scent — like floral, woody, or amber."
+                : "Our collection is being poured. Check back soon for new arrivals."
+            }
+            action_label={query ? "Clear search" : "Back to home"}
+            action_to={query ? undefined : "/"}
+            on_action={query ? () => set_search_query("") : undefined}
+          />
         ) : (
           <div className="sg-shop__grid">
             {filtered_products.map((product) => (

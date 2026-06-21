@@ -4,6 +4,7 @@
   --sg-cream: #ede6da;
   --sg-cream-light: #f3ece0;
   --sg-cream-dark: #d9d0c0;
+  --sg-page: #ffffff;
   --sg-ink: #2b2620;
   --sg-gold: #a98a5b;
   --sg-gold-light: #c9a876;
@@ -15,8 +16,14 @@
   box-sizing: border-box;
 }
 
+body,
+#root {
+  background: var(--sg-page);
+}
+
 .sg-main {
   flex: 1;
   width: 100%;
   min-height: 0;
+  background: var(--sg-page);
 }

@@ -1,0 +1,42 @@
+.sg-pricing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 14px;
+}
+
+.sg-pricing--compact {
+  justify-content: flex-start;
+  gap: 6px 10px;
+}
+
+.sg-pricing__current {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--sg-ink);
+}
+
+.sg-pricing--compact .sg-pricing__current {
+  font-size: 0.875rem;
+}
+
+.sg-pricing__original {
+  font-size: 1rem;
+  color: rgba(43, 38, 32, 0.45);
+  text-decoration: line-through;
+}
+
+.sg-pricing--compact .sg-pricing__original {
+  font-size: 0.75rem;
+}
+
+.sg-pricing__discount {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #2e9b4e;
+}
+
+.sg-pricing--compact .sg-pricing__discount {
+  font-size: 0.75rem;
+}

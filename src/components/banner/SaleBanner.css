@@ -1,0 +1,52 @@
+.sg-sale-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 10px 48px 10px 20px;
+  background: var(--sg-ink);
+  color: #fffaf1;
+  position: relative;
+  z-index: 90;
+}
+
+.sg-sale-banner__text {
+  margin: 0;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.sg-sale-banner__tag {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 2px 8px;
+  background: var(--sg-gold);
+  color: var(--sg-ink);
+  font-weight: 700;
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 3px;
+}
+
+.sg-sale-banner__close {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 250, 241, 0.7);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .sg-sale-banner__text {
+    font-size: 0.75rem;
+  }
+}

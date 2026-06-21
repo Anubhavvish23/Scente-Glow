@@ -1,5 +1,6 @@
 .sg-home {
   font-family: var(--sg-font);
+  background: var(--sg-page);
 }
 
 .sg-hero {

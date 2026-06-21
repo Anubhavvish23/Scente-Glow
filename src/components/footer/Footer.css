@@ -1,5 +1,5 @@
 .sg-footer {
-  background: var(--sg-cream);
+  background: var(--sg-page);
   border-top: 1px solid rgba(43, 38, 32, 0.12);
   font-family: "Helvetica Neue", Arial, sans-serif;
   color: var(--sg-ink);
@@ -45,20 +45,25 @@
 }
 
 .sg-footer__brand {
-  overflow: hidden;
+  display: flex;
+  justify-content: center;
   margin-bottom: 48px;
 }
 
-.sg-footer__brand-text {
-  font-family: var(--sg-font);
-  font-size: clamp(4rem, 15vw, 12rem);
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: rgba(43, 38, 32, 0.05);
-  white-space: nowrap;
-  user-select: none;
-  margin: 0;
-  font-weight: 400;
+.sg-footer__logo-link {
+  display: inline-block;
+  line-height: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sg-footer__logo-link:hover {
+  opacity: 0.82;
+}
+
+.sg-footer__logo {
+  width: min(220px, 62vw);
+  height: auto;
+  display: block;
 }
 
 .sg-footer__bottom {
@@ -105,8 +110,8 @@
     gap: 32px;
   }
 
-  .sg-footer__brand-text {
-    font-size: clamp(6rem, 12vw, 11rem);
+  .sg-footer__logo {
+    width: 240px;
   }
 
   .sg-footer__bottom {

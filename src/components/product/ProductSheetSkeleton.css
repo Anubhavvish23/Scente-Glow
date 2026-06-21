@@ -1,0 +1,70 @@
+.sg-sheet-skeleton {
+  padding: 8px 15% 32px;
+}
+
+.sg-sheet-skeleton__image {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  max-height: 52vh;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  background: linear-gradient(
+    90deg,
+    rgba(43, 38, 32, 0.06) 25%,
+    rgba(43, 38, 32, 0.1) 50%,
+    rgba(43, 38, 32, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: sgSheetSkeletonShimmer 1.4s ease infinite;
+}
+
+.sg-sheet-skeleton__line {
+  height: 14px;
+  border-radius: 6px;
+  margin: 0 auto 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(43, 38, 32, 0.06) 25%,
+    rgba(43, 38, 32, 0.1) 50%,
+    rgba(43, 38, 32, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: sgSheetSkeletonShimmer 1.4s ease infinite;
+}
+
+.sg-sheet-skeleton__line--title {
+  width: 60%;
+  height: 18px;
+}
+
+.sg-sheet-skeleton__line--scent {
+  width: 40%;
+}
+
+.sg-sheet-skeleton__line--price {
+  width: 30%;
+  margin-bottom: 20px;
+}
+
+.sg-sheet-skeleton__btn {
+  width: 100%;
+  height: 48px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(43, 38, 32, 0.06) 25%,
+    rgba(43, 38, 32, 0.1) 50%,
+    rgba(43, 38, 32, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: sgSheetSkeletonShimmer 1.4s ease infinite;
+}
+
+@keyframes sgSheetSkeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

@@ -1,0 +1,74 @@
+.sg-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 56px 24px;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.sg-empty-state__icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  color: var(--sg-gold);
+  opacity: 0.7;
+}
+
+.sg-empty-state__icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.sg-empty-state__title {
+  font-family: var(--sg-font);
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--sg-ink);
+  margin: 0 0 8px;
+}
+
+.sg-empty-state__description {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: rgba(43, 38, 32, 0.55);
+  margin: 0 0 20px;
+}
+
+.sg-empty-state__action {
+  display: inline-block;
+  padding: 12px 24px;
+  background: transparent;
+  border: 1px solid var(--sg-ink);
+  color: var(--sg-ink);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.sg-empty-state__action:hover {
+  opacity: 0.75;
+}
+
+.sg-empty-state--compact {
+  padding: 32px 16px;
+}
+
+.sg-empty-state--compact .sg-empty-state__icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 14px;
+}
+
+.sg-empty-state--compact .sg-empty-state__icon svg {
+  width: 36px;
+  height: 36px;
+}

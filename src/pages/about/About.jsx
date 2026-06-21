@@ -68,13 +68,13 @@ function About() {
               What started as a quiet ritual became a lifelong pursuit.
             </h2>
             <p className="sg-about__text">
-              ScenteGlow was born in a small sun-filled studio in the south of France, where our
+              Scenté Glow was born in a small sun-filled studio in the south of France, where our
               founder first discovered the alchemy of wax and fragrance. What began as evening
               experiments — melting beeswax, blending essential oils, watching flame dance —
               slowly became an obsession with light itself.
             </p>
             <p className="sg-about__text">
-              Today, every ScenteGlow candle is still hand-poured in small batches, using 100%
+              Today, every Scenté Glow candle is still hand-poured in small batches, using 100%
               natural soy wax, lead-free cotton wicks, and fragrance oils sourced from the finest
               perfumeries in Grasse. We believe that the act of lighting a candle should feel like
               a ceremony — a moment of pause in an otherwise hurried world.
@@ -120,7 +120,7 @@ function About() {
             </h2>
             <p className="sg-about__text">
               Every fragrance we create is a story — a memory, a place, a feeling distilled into
-              wax. Our hope is that each time you light a ScenteGlow candle, you find a moment of
+              wax. Our hope is that each time you light a Scenté Glow candle, you find a moment of
               beauty in your day.
             </p>
             <Link to="/shop" className="sg-about__cta">

@@ -1,6 +1,6 @@
 .sg-about {
   min-height: 100vh;
-  background: var(--sg-cream-light);
+  background: var(--sg-page);
   font-family: "Helvetica Neue", Arial, sans-serif;
   color: var(--sg-ink);
 }
@@ -75,7 +75,9 @@
 }
 
 .sg-about__section--card {
-  background: var(--sg-cream);
+  background: var(--sg-page);
+  border-top: 1px solid rgba(43, 38, 32, 0.08);
+  border-bottom: 1px solid rgba(43, 38, 32, 0.08);
 }
 
 .sg-about__grid {

@@ -1,0 +1,72 @@
+.sg-shop-skeleton {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.sg-shop-skeleton__card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sg-shop-skeleton__media {
+  aspect-ratio: 3 / 4;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(43, 38, 32, 0.06) 25%,
+    rgba(43, 38, 32, 0.1) 50%,
+    rgba(43, 38, 32, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: sgSkeletonShimmer 1.4s ease infinite;
+}
+
+.sg-shop-skeleton__line {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(43, 38, 32, 0.06) 25%,
+    rgba(43, 38, 32, 0.1) 50%,
+    rgba(43, 38, 32, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: sgSkeletonShimmer 1.4s ease infinite;
+}
+
+.sg-shop-skeleton__line--title {
+  width: 75%;
+  height: 14px;
+}
+
+.sg-shop-skeleton__line--scent {
+  width: 50%;
+}
+
+.sg-shop-skeleton__line--price {
+  width: 40%;
+}
+
+@keyframes sgSkeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .sg-shop-skeleton {
+    gap: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sg-shop-skeleton {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+  }
+}

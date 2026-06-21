@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/home/Home";
 import Shop from "./pages/shop/Shop";
+import Product from "./pages/product/Product";
 import About from "./pages/about/About";
 import Contact from "./pages/contact";
 
@@ -9,6 +10,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/shop" element={<Shop />} />
+      <Route path="/product/:id" element={<Product />} />
       <Route path="/collections" element={<Navigate to="/shop" replace />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />

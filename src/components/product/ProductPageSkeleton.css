@@ -1,0 +1,133 @@
+.sg-product-skeleton {
+  min-height: 100vh;
+  background: #ffffff;
+  padding: 68px 6vw 56px;
+}
+
+.sg-product-skeleton__back {
+  width: 140px;
+  height: 14px;
+  border-radius: 6px;
+  margin-bottom: 24px;
+  background: linear-gradient(
+    90deg,
+    rgba(43, 38, 32, 0.06) 25%,
+    rgba(43, 38, 32, 0.1) 50%,
+    rgba(43, 38, 32, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: sgProductSkeletonShimmer 1.4s ease infinite;
+}
+
+.sg-product-skeleton__layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 380px) 1fr;
+  gap: 48px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.sg-product-skeleton__gallery {
+  aspect-ratio: 3 / 4;
+  max-height: 420px;
+  border-radius: 16px;
+  background: linear-gradient(
+    90deg,
+    rgba(43, 38, 32, 0.06) 25%,
+    rgba(43, 38, 32, 0.1) 50%,
+    rgba(43, 38, 32, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: sgProductSkeletonShimmer 1.4s ease infinite;
+}
+
+.sg-product-skeleton__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 8px;
+}
+
+.sg-product-skeleton__line {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(43, 38, 32, 0.06) 25%,
+    rgba(43, 38, 32, 0.1) 50%,
+    rgba(43, 38, 32, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: sgProductSkeletonShimmer 1.4s ease infinite;
+}
+
+.sg-product-skeleton__line--sm {
+  width: 35%;
+  height: 10px;
+}
+
+.sg-product-skeleton__line--lg {
+  width: 80%;
+  height: 22px;
+}
+
+.sg-product-skeleton__line--md {
+  width: 50%;
+}
+
+.sg-product-skeleton__line--price {
+  width: 30%;
+  height: 18px;
+}
+
+.sg-product-skeleton__block {
+  height: 120px;
+  border-radius: 8px;
+  margin-top: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(43, 38, 32, 0.06) 25%,
+    rgba(43, 38, 32, 0.1) 50%,
+    rgba(43, 38, 32, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: sgProductSkeletonShimmer 1.4s ease infinite;
+}
+
+.sg-product-skeleton__btn {
+  width: 100%;
+  max-width: 320px;
+  height: 48px;
+  border-radius: 4px;
+  margin-top: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(43, 38, 32, 0.06) 25%,
+    rgba(43, 38, 32, 0.1) 50%,
+    rgba(43, 38, 32, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: sgProductSkeletonShimmer 1.4s ease infinite;
+}
+
+@keyframes sgProductSkeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .sg-product-skeleton {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sg-product-skeleton__layout {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
