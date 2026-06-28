@@ -9,12 +9,37 @@
   min-height: auto;
 }
 
+.sg-shop--embedded .sg-shop__grid-section {
+  padding-top: 0;
+  padding-bottom: 72px;
+}
+
 .sg-shop__header {
   padding: 128px 6vw 64px;
 }
 
+.sg-shop__header:not(.sg-shop__header--embedded) {
+  text-align: center;
+  padding-top: 40px;
+  padding-bottom: 24px;
+}
+
+.sg-shop__header:not(.sg-shop__header--embedded) .sg-shop__header-inner {
+  margin-inline: auto;
+}
+
 .sg-shop__header--embedded {
-  padding-top: 80px;
+  padding: 40px 6vw 20px;
+  text-align: center;
+}
+
+.sg-shop__header--embedded .sg-shop__header-inner {
+  margin-inline: auto;
+}
+
+.sg-shop__header--embedded .sg-shop__intro {
+  margin-top: 14px;
+  margin-inline: auto;
 }
 
 .sg-shop__header-inner {
@@ -26,7 +51,7 @@
   letter-spacing: 0.35em;
   text-transform: uppercase;
   color: var(--sg-gold);
-  margin: 0 0 10px;
+  margin: 0;
 }
 
 .sg-shop__title {
@@ -46,65 +71,65 @@
   margin: 0;
 }
 
-.sg-shop__header--with-search {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding-top: 52px;
-  padding-bottom: 28px;
-}
-
-.sg-shop__header--with-search .sg-shop__header-inner {
-  max-width: 42rem;
-}
-
 .sg-shop__search-wrap {
   width: 100%;
-  max-width: 32rem;
-  margin: 0 auto 16px;
-  padding: 0 6vw;
+  max-width: 420px;
+  margin: 0 auto;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: max-height 0.35s ease, opacity 0.3s ease, margin-bottom 0.35s ease;
+  margin-bottom: 0;
+}
+
+.sg-shop__search-wrap--visible {
+  max-height: 72px;
+  opacity: 1;
+  pointer-events: auto;
+  margin-bottom: 12px;
 }
 
 .sg-shop__search {
   display: flex;
   align-items: center;
-  gap: 14px;
+  position: relative;
   width: 100%;
-  padding: 18px 28px;
-  background: var(--sg-page);
-  border: 1px solid rgba(43, 38, 32, 0.14);
-  border-radius: 999px;
-  cursor: text;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.sg-shop__search:focus-within {
-  border-color: var(--sg-gold);
-  box-shadow: 0 4px 20px rgba(169, 138, 91, 0.12);
+  line-height: 28px;
 }
 
 .sg-shop__search-icon {
-  flex-shrink: 0;
-  color: var(--sg-gold);
-  opacity: 0.85;
+  position: absolute;
+  left: 1rem;
+  width: 1rem;
+  height: 1rem;
+  fill: var(--sg-gold);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .sg-shop__search-input {
-  flex: 1;
-  min-width: 0;
-  border: none;
-  background: transparent;
-  font-family: var(--sg-font);
-  font-size: 1.125rem;
-  font-style: italic;
-  color: var(--sg-ink);
+  height: 44px;
+  width: 100%;
+  padding: 0 1rem 0 2.75rem;
+  border: 1px solid rgba(43, 38, 32, 0.12);
+  border-radius: 6px;
   outline: none;
+  background-color: var(--sg-page);
+  color: var(--sg-ink);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.9375rem;
+  box-shadow: 0 2px 12px rgba(43, 38, 32, 0.06);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sg-shop__search-input:focus {
+  border-color: var(--sg-gold);
+  box-shadow: 0 4px 16px rgba(169, 138, 91, 0.12);
 }
 
 .sg-shop__search-input::placeholder {
-  color: rgba(43, 38, 32, 0.38);
-  font-style: italic;
+  color: rgba(43, 38, 32, 0.42);
 }
 
 .sg-shop__search-input::-webkit-search-cancel-button {
@@ -239,6 +264,30 @@
   margin: 0;
 }
 
+.sg-shop__view-all-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.sg-shop__view-all {
+  display: inline-block;
+  padding: 15px 40px;
+  background: var(--sg-ink);
+  color: #fffaf1;
+  text-decoration: none;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: opacity 0.3s ease;
+}
+
+.sg-shop__view-all:hover {
+  opacity: 0.88;
+  color: #fffaf1;
+}
+
 @media (min-width: 768px) {
   .sg-shop__header {
     padding-left: 8vw;
@@ -246,17 +295,12 @@
   }
 
   .sg-shop__search-wrap {
-    max-width: 34rem;
-    padding: 0;
-    margin-bottom: 20px;
-  }
-
-  .sg-shop__search {
-    padding: 20px 32px;
+    max-width: 440px;
   }
 
   .sg-shop__search-input {
-    font-size: 1.2rem;
+    height: 46px;
+    font-size: 1rem;
   }
 
   .sg-shop__grid-section {
@@ -271,10 +315,6 @@
 }
 
 @media (min-width: 1024px) {
-  .sg-shop__search-wrap {
-    max-width: 36rem;
-  }
-
   .sg-shop__grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 28px;

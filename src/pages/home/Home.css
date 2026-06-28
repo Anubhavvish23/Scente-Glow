@@ -6,33 +6,29 @@
 .sg-hero {
   position: relative;
   width: 100%;
-  height: 100vh;
-  min-height: 640px;
+  min-height: 100vh;
   overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
-/* Background image layer — animated to slowly scale, mimicking a video's
-   subtle drift instead of a static photo. */
 .sg-hero__bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #5a4632, #2e2419) center / cover no-repeat;
   background-image: var(--hero-image);
   background-size: cover;
-  background-position: center;
-  animation: sgKenBurns 22s ease-in-out infinite alternate;
+  background-position: calc(38% + 45px) calc(50% + 10px);
+  transform-origin: calc(38% + 45px) calc(50% + 10px);
+  animation: sgKenBurns 14s ease-in-out infinite alternate;
   will-change: transform;
 }
 
 @keyframes sgKenBurns {
   0% {
-    transform: scale(1) translate(0, 0);
+    transform: scale(1.2) translate(0, 0);
   }
   100% {
-    transform: scale(1.18) translate(-1%, -1%);
+    transform: scale(1.32) translate(-0.5%, -0.5%);
   }
 }
 
@@ -40,59 +36,127 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    to bottom,
-    rgba(20, 16, 12, 0.55) 0%,
-    rgba(20, 16, 12, 0.35) 45%,
-    rgba(20, 16, 12, 0.65) 100%
+    to right,
+    rgba(20, 16, 12, 0.72) 0%,
+    rgba(20, 16, 12, 0.45) 42%,
+    rgba(20, 16, 12, 0.15) 70%,
+    rgba(20, 16, 12, 0.05) 100%
   );
 }
 
-.sg-hero__content {
+.sg-hero__inner {
   position: relative;
   z-index: 2;
-  text-align: center;
-  max-width: 900px;
-  padding: 0 24px;
-  color: var(--sg-cream-light);
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 120px 6vw 80px;
 }
 
-.sg-hero__eyebrow {
-  font-size: 0.85rem;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  color: var(--sg-gold-light);
-  margin-bottom: 22px;
+.sg-hero__content {
+  text-align: left;
+  max-width: 520px;
 }
 
 .sg-hero__title {
-  font-style: italic;
+  font-family: var(--sg-font);
+  font-style: normal;
   font-weight: 400;
-  font-size: clamp(2.4rem, 6vw, 4.6rem);
-  line-height: 1.2;
-  margin: 0 0 40px;
+  font-size: clamp(2.25rem, 4.2vw, 3.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin: 0 0 20px;
   color: #fffaf1;
+}
+
+.sg-hero__lead {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: rgba(255, 250, 241, 0.78);
+  margin: 0 0 36px;
+  max-width: 400px;
 }
 
 .sg-hero__cta {
   display: inline-block;
-  padding: 16px 42px;
-  border: 1px solid rgba(255, 250, 241, 0.7);
+  padding: 15px 36px;
+  background: var(--sg-ink);
   color: #fffaf1;
+  border: none;
   text-decoration: none;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-family: "Helvetica Neue", Arial, sans-serif;
-  transition: background 0.3s ease, color 0.3s ease;
+  font-weight: 600;
+  transition: opacity 0.3s ease;
 }
 
 .sg-hero__cta:hover {
-  background: #fffaf1;
-  color: var(--sg-ink);
+  opacity: 0.88;
+  color: #fffaf1;
+}
+
+@media (max-width: 900px) {
+  .sg-hero__inner {
+    padding: 100px 6vw 64px;
+  }
+
+  .sg-hero__bg {
+    background-position: calc(50% + 14px) calc(50% + 8px);
+    transform-origin: calc(50% + 14px) calc(50% + 8px);
+    animation: sgKenBurnsMobile 14s ease-in-out infinite alternate;
+  }
+
+  .sg-hero__overlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(20, 16, 12, 0.65) 0%,
+      rgba(20, 16, 12, 0.45) 55%,
+      rgba(20, 16, 12, 0.35) 100%
+    );
+  }
+}
+
+@keyframes sgKenBurnsMobile {
+  0% {
+    transform: scale(1.06) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.12) translate(-0.5%, -0.5%);
+  }
 }
 
 @media (max-width: 600px) {
+  .sg-hero {
+    min-height: 0;
+    aspect-ratio: 3 / 4;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .sg-hero__bg {
+    background-position: center 42%;
+    transform-origin: center center;
+    animation: sgKenBurnsPhone 18s ease-in-out infinite alternate;
+  }
+
   .sg-hero__title {
-    font-size: 2.2rem;
+    font-size: 2rem;
+  }
+
+  .sg-hero__lead {
+    font-size: 0.875rem;
+    margin-bottom: 28px;
+  }
+}
+
+@keyframes sgKenBurnsPhone {
+  0% {
+    transform: scale(1.12) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.28) translate(-2.5%, -2%);
   }
 }

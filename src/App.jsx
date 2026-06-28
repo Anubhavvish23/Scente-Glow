@@ -6,6 +6,7 @@ import ProductSheet from "./components/product/ProductSheet";
 import SaleBanner from "./components/banner/SaleBanner";
 import ScrollToTop from "./components/ScrollToTop";
 import { CartProvider } from "./context/CartContext";
+import { SearchProvider } from "./context/SearchContext";
 import { ProductSheetProvider } from "./context/ProductSheetContext";
 import { ToastProvider } from "./context/ToastContext";
 
@@ -22,18 +23,20 @@ function App() {
 
   return (
     <ToastProvider>
-      <CartProvider>
-        <ProductSheetProvider>
-          <ScrollToTop />
-          <SaleBanner />
-          <Navbar />
-          <main className="sg-main">
-            <AppRoutes />
-          </main>
-          <CartDrawer />
-          <ProductSheet />
-        </ProductSheetProvider>
-      </CartProvider>
+      <SearchProvider>
+        <CartProvider>
+          <ProductSheetProvider>
+            <ScrollToTop />
+            <SaleBanner />
+            <Navbar />
+            <main className="sg-main">
+              <AppRoutes />
+            </main>
+            <CartDrawer />
+            <ProductSheet />
+          </ProductSheetProvider>
+        </CartProvider>
+      </SearchProvider>
     </ToastProvider>
   );
 }
