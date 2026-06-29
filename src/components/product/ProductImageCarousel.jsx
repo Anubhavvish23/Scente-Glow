@@ -4,7 +4,6 @@ import "./ProductImageCarousel.css";
 function ProductImageCarousel({
   images,
   alt,
-  rating,
   className = "",
   compact = false,
 }) {
@@ -92,13 +91,6 @@ function ProductImageCarousel({
           </div>
         ))}
       </div>
-
-      {rating && (
-        <span className="sg-product-carousel__rating">
-          <span className="sg-product-carousel__rating-star">★</span>
-          {Number(rating).toFixed(1)}
-        </span>
-      )}
 
       {valid_images.length > 1 && (
         <div className="sg-product-carousel__dots">

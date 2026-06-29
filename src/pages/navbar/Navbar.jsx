@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useSearch } from "../../context/SearchContext";
 import "./Navbar.css";
@@ -8,8 +8,9 @@ const Navbar = () => {
   const [scrolled, set_scrolled] = useState(false);
   const [menu_open, set_menu_open] = useState(false);
   const { cart_count, open_cart } = useCart();
-  const { open_shop_search } = useSearch();
+  const { open_shop_search, search_open } = useSearch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const on_scroll = () => set_scrolled(window.scrollY > 30);
@@ -17,11 +18,23 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", on_scroll);
   }, []);
 
-  const handle_search_click = () => {
+  const handle_search_click = useCallback(() => {
     set_menu_open(false);
+
+    const on_collections =
+      location.pathname === "/collections" || location.pathname === "/shop";
+
+    if (on_collections && search_open) {
+      document.getElementById("shop-search")?.focus();
+      return;
+    }
+
     open_shop_search();
-    navigate("/collections");
-  };
+
+    if (!on_collections) {
+      navigate("/collections");
+    }
+  }, [location.pathname, navigate, open_shop_search, search_open]);
 
   return (
     <header className={`sg-navbar ${scrolled ? "sg-navbar--scrolled" : ""}`}>

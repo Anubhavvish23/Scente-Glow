@@ -32,12 +32,6 @@ function ProductCard({ product }) {
       onClick={handle_click}
     >
       <div className="sg-shop__card-media">
-        {product.rating && (
-          <span className="sg-shop__card-rating">
-            <span className="sg-shop__card-rating-star">★</span>
-            {Number(product.rating).toFixed(1)}
-          </span>
-        )}
         <img
           src={product.img}
           alt={product.name}
@@ -52,6 +46,9 @@ function ProductCard({ product }) {
       <div className="sg-shop__card-info">
         <div>
           <h3 className="sg-shop__card-name">{product.name}</h3>
+          {product.category && (
+            <p className="sg-shop__card-category">{product.category}</p>
+          )}
           <p className="sg-shop__card-scent">{product.scent}</p>
           <ProductPricing
             price={product.price}
@@ -65,8 +62,11 @@ function ProductCard({ product }) {
 }
 
 function ShopSection({ embedded = false, limit = 4 }) {
+  const products_per_page = 12;
   const [products, set_products] = useState([]);
   const [loading, set_loading] = useState(true);
+  const [current_page, set_current_page] = useState(1);
+  const [selected_category, set_selected_category] = useState("All");
   const {
     search_query,
     set_search_query,
@@ -76,6 +76,7 @@ function ShopSection({ embedded = false, limit = 4 }) {
     clear_focus_shop_search,
   } = useSearch();
   const search_input_ref = useRef(null);
+  const skip_page_scroll_ref = useRef(true);
   const { product_id } = useProductSheet();
   const sheet_open = Boolean(product_id);
 
@@ -93,7 +94,6 @@ function ShopSection({ embedded = false, limit = 4 }) {
   useEffect(() => {
     if (embedded || !focus_shop_search || !search_open) return;
 
-    window.scrollTo(0, 0);
     window.requestAnimationFrame(() => {
       search_input_ref.current?.focus();
       clear_focus_shop_search();
@@ -101,17 +101,71 @@ function ShopSection({ embedded = false, limit = 4 }) {
   }, [embedded, focus_shop_search, search_open, clear_focus_shop_search]);
 
   const query = embedded ? "" : search_query.trim().toLowerCase();
+
+  const categories = embedded
+    ? []
+    : [
+        "All",
+        ...Array.from(
+          new Set(
+            products
+              .map((product) => product.category)
+              .filter((category) => category && category !== "All Products")
+          )
+        ).sort((a, b) => a.localeCompare(b)),
+      ];
+
+  const category_products =
+    embedded || selected_category === "All"
+      ? products
+      : products.filter((product) => product.category === selected_category);
+
   const filtered_products = query
-    ? products.filter(
+    ? category_products.filter(
         (product) =>
           product.name.toLowerCase().includes(query) ||
-          (product.scent || "").toLowerCase().includes(query)
+          (product.scent || "").toLowerCase().includes(query) ||
+          (product.category || "").toLowerCase().includes(query) ||
+          (product.description || "").toLowerCase().includes(query)
       )
-    : products;
+    : category_products;
+
+  useEffect(() => {
+    set_current_page(1);
+  }, [query, selected_category]);
+
+  useEffect(() => {
+    if (embedded || skip_page_scroll_ref.current) {
+      skip_page_scroll_ref.current = false;
+      return;
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [current_page, embedded]);
+
+  const total_pages = embedded
+    ? 1
+    : Math.max(1, Math.ceil(filtered_products.length / products_per_page));
+
+  const page_start = embedded ? 0 : (current_page - 1) * products_per_page;
+  const page_end = embedded ? limit : page_start + products_per_page;
 
   const displayed_products = embedded
     ? filtered_products.slice(0, limit)
-    : filtered_products;
+    : filtered_products.slice(page_start, page_end);
+
+  const handle_page_change = (next_page) => {
+    set_current_page(next_page);
+  };
+
+  const handle_category_select = (category) => {
+    set_selected_category(category);
+    search_input_ref.current?.blur();
+  };
+
+  const handle_category_pointer_down = (event) => {
+    event.preventDefault();
+  };
 
   return (
     <div className={`sg-shop ${embedded ? "sg-shop--embedded" : ""}`} id="shop">
@@ -146,6 +200,25 @@ function ShopSection({ embedded = false, limit = 4 }) {
           <div className="sg-shop__header-inner">
             <p className="sg-shop__eyebrow">Our Collection</p>
           </div>
+
+          {categories.length > 1 && (
+            <div className="sg-shop__categories">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  className={`sg-shop__category-btn ${
+                    selected_category === category ? "sg-shop__category-btn--active" : ""
+                  }`}
+                  onMouseDown={handle_category_pointer_down}
+                  onTouchStart={handle_category_pointer_down}
+                  onClick={() => handle_category_select(category)}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          )}
         </section>
       )}
 
@@ -159,7 +232,7 @@ function ShopSection({ embedded = false, limit = 4 }) {
 
       <section className="sg-shop__grid-section">
         {loading ? (
-          <ShopSkeleton count={embedded ? 4 : 8} />
+          <ShopSkeleton count={embedded ? 4 : products_per_page} />
         ) : filtered_products.length === 0 ? (
           <EmptyState
             icon={
@@ -168,15 +241,22 @@ function ShopSection({ embedded = false, limit = 4 }) {
                 <path d="M20 20l-4-4" />
               </svg>
             }
-            title={query ? "No matches found" : "No candles yet"}
+            title={query || selected_category !== "All" ? "No matches found" : "No candles yet"}
             description={
-              query
-                ? "Try a different name or scent — like floral, woody, or amber."
+              query || selected_category !== "All"
+                ? "Try another category or clear your search to see more candles."
                 : "Our collection is being poured. Check back soon for new arrivals."
             }
-            action_label={query ? "Clear search" : "Back to home"}
-            action_to={query ? undefined : "/"}
-            on_action={query ? clear_search : undefined}
+            action_label={query || selected_category !== "All" ? "Show all" : "Back to home"}
+            action_to={query || selected_category !== "All" ? undefined : "/"}
+            on_action={
+              query || selected_category !== "All"
+                ? () => {
+                    clear_search();
+                    set_selected_category("All");
+                  }
+                : undefined
+            }
           />
         ) : (
           <>
@@ -190,6 +270,29 @@ function ShopSection({ embedded = false, limit = 4 }) {
                 <Link to="/collections" className="sg-shop__view-all">
                   View All
                 </Link>
+              </div>
+            )}
+            {!embedded && total_pages > 1 && (
+              <div className="sg-shop__pagination">
+                <button
+                  type="button"
+                  className="sg-shop__pagination-btn"
+                  disabled={current_page === 1}
+                  onClick={() => handle_page_change(current_page - 1)}
+                >
+                  Previous
+                </button>
+                <span className="sg-shop__pagination-label">
+                  Page {current_page} of {total_pages}
+                </span>
+                <button
+                  type="button"
+                  className="sg-shop__pagination-btn"
+                  disabled={current_page === total_pages}
+                  onClick={() => handle_page_change(current_page + 1)}
+                >
+                  Next
+                </button>
               </div>
             )}
           </>

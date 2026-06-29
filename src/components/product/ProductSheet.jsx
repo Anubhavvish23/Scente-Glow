@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { fetch_product_by_id } from "../../api/products";
 import ProductImageCarousel from "./ProductImageCarousel";
 import ProductCartControl from "./ProductCartControl";
-import ProductReviews from "./ProductReviews";
 import ProductSheetSkeleton from "./ProductSheetSkeleton";
 import RelatedProducts from "./RelatedProducts";
 import ProductPricing from "../pricing/ProductPricing";
 import { useProductSheet } from "../../context/ProductSheetContext";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { get_whatsapp_product_url } from "../../utils/whatsapp";
+import { get_product_details } from "../../utils/product";
 import "./ProductSheet.css";
 
 function ProductSheet() {
@@ -181,11 +181,13 @@ function ProductSheet() {
             <ProductImageCarousel
               images={[product.img, product.lifestyle]}
               alt={product.name}
-              rating={product.rating}
               compact
             />
 
             <h2 className="sg-product-sheet__name">{product.name.toUpperCase()}</h2>
+            {product.category && (
+              <p className="sg-product-sheet__category">{product.category}</p>
+            )}
             <p className="sg-product-sheet__scent">{product.scent}</p>
 
             <ProductPricing
@@ -199,10 +201,9 @@ function ProductSheet() {
             </p>
 
             <ul className="sg-product-sheet__details">
-              <li>100% natural soy wax</li>
-              <li>Lead-free cotton wick</li>
-              <li>45+ hour burn time</li>
-              <li>Small batch poured</li>
+              {get_product_details(product).map((detail) => (
+                <li key={detail}>{detail}</li>
+              ))}
             </ul>
 
             <ProductCartControl product={product} variant="sheet" />
@@ -215,13 +216,6 @@ function ProductSheet() {
             >
               Order by WhatsApp
             </a>
-
-            <ProductReviews
-              rating={product.rating}
-              review_count={product.review_count}
-              product_name={product.name}
-              className="sg-product-reviews--sheet"
-            />
 
             <RelatedProducts current_product={product} />
           </div>

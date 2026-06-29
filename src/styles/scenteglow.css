@@ -45,3 +45,9 @@ body::-webkit-scrollbar {
   min-height: 0;
   background: var(--sg-page);
 }
+
+.sg-main h1,
+.sg-main h2,
+.sg-main h3 {
+  color: var(--sg-ink);
+}

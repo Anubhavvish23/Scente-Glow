@@ -3,13 +3,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { fetch_product_by_id } from "../../api/products";
 import ProductPricing from "../../components/pricing/ProductPricing";
 import ProductImageCarousel from "../../components/product/ProductImageCarousel";
-import ProductReviews from "../../components/product/ProductReviews";
 import RelatedProducts from "../../components/product/RelatedProducts";
 import ProductCartControl from "../../components/product/ProductCartControl";
 import ProductPageSkeleton from "../../components/product/ProductPageSkeleton";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useProductSheet } from "../../context/ProductSheetContext";
 import { get_whatsapp_product_url } from "../../utils/whatsapp";
+import { get_product_details } from "../../utils/product";
 import "./Product.css";
 
 function Product() {
@@ -68,12 +68,13 @@ function Product() {
           <ProductImageCarousel
             images={[product.img, product.lifestyle]}
             alt={product.name}
-            rating={product.rating}
           />
         </div>
 
         <div className="sg-product-page__panel">
-          <p className="sg-product-page__eyebrow">Hand-poured candle</p>
+          <p className="sg-product-page__eyebrow">
+            {product.category || "Hand-poured candle"}
+          </p>
           <h1 className="sg-product-page__name">{product.name.toUpperCase()}</h1>
           <p className="sg-product-page__scent">{product.scent}</p>
 
@@ -88,17 +89,14 @@ function Product() {
           </p>
 
           <ul className="sg-product-page__details">
-            <li>100% natural soy wax</li>
-            <li>Lead-free cotton wick</li>
-            <li>45+ hour burn time</li>
-            <li>Small batch poured</li>
-            <li>Phthalate-free fragrance oils</li>
-            <li>Reusable glass jar</li>
+            {get_product_details(product).map((detail) => (
+              <li key={detail}>{detail}</li>
+            ))}
           </ul>
 
           <div className="sg-product-page__meta">
-            <p><span>Weight</span> 200g</p>
-            <p><span>Burn time</span> 45–50 hours</p>
+            <p><span>Weight</span> {product.weight || "200g"}</p>
+            <p><span>Burn time</span> {product.burn_time || "45–50 hours"}</p>
             <p><span>Wick</span> Cotton, lead-free</p>
           </div>
 
@@ -115,12 +113,7 @@ function Product() {
         </div>
       </div>
 
-      <div className="sg-product-page__reviews-wrap">
-        <ProductReviews
-          rating={product.rating}
-          review_count={product.review_count}
-          product_name={product.name}
-        />
+      <div className="sg-product-page__related-wrap">
         <RelatedProducts current_product={product} variant="page" />
       </div>
     </div>
