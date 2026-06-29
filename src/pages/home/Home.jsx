@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
-import ShopSection from "../shop/ShopSection";
+import Footer from "../../components/footer/Footer";
 import "./Home.css";
-import "../shop/Shop.css";
 
 function Home() {
   return (
@@ -20,14 +19,14 @@ function Home() {
             <p className="sg-hero__lead">
               Crafted to evoke emotions, memories and moments.
             </p>
-            <Link to="/shop" className="sg-hero__cta">
+            <Link to="/collections" className="sg-hero__cta">
               Shop Now
             </Link>
           </div>
         </div>
       </section>
 
-      <ShopSection embedded />
+      <Footer />
     </div>
   );
 }

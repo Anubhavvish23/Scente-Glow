@@ -8,6 +8,8 @@
   border-bottom: 1px solid rgba(43, 38, 32, 0.12);
   font-family: var(--sg-font);
   transition: box-shadow 0.3s ease, padding 0.3s ease;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .sg-navbar--scrolled {
@@ -24,6 +26,7 @@
 }
 
 .sg-navbar__logo {
+  font-family: var(--sg-logo-font);
   font-size: 1.7rem;
   letter-spacing: 0.08em;
   color: var(--sg-ink);

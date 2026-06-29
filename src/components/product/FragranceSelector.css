@@ -1,0 +1,54 @@
+.sg-fragrance-selector {
+  margin-bottom: 20px;
+}
+
+.sg-fragrance-selector__label {
+  margin: 0 0 10px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(43, 38, 32, 0.55);
+}
+
+.sg-fragrance-selector__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sg-fragrance-selector__option {
+  padding: 8px 14px;
+  border: 1px solid rgba(43, 38, 32, 0.14);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--sg-ink);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.sg-fragrance-selector__option:hover {
+  border-color: var(--sg-gold);
+  color: var(--sg-gold);
+}
+
+.sg-fragrance-selector__option--active {
+  background: var(--sg-ink);
+  border-color: var(--sg-ink);
+  color: #fffaf1;
+}
+
+.sg-fragrance-selector__option--active:hover {
+  color: #fffaf1;
+}
+
+.sg-fragrance-selector--sheet {
+  margin-bottom: 16px;
+}

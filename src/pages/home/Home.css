@@ -19,7 +19,7 @@
   background-size: cover;
   background-position: calc(38% + 45px) calc(50% + 10px);
   transform-origin: calc(38% + 45px) calc(50% + 10px);
-  animation: sgKenBurns 14s ease-in-out infinite alternate;
+  animation: sgKenBurns 7s linear infinite alternate;
   will-change: transform;
 }
 
@@ -28,7 +28,7 @@
     transform: scale(1.2) translate(0, 0);
   }
   100% {
-    transform: scale(1.32) translate(-0.5%, -0.5%);
+    transform: scale(1.34) translate(-1.2%, -0.8%);
   }
 }
 
@@ -106,7 +106,7 @@
   .sg-hero__bg {
     background-position: calc(50% + 14px) calc(50% + 8px);
     transform-origin: calc(50% + 14px) calc(50% + 8px);
-    animation: sgKenBurnsMobile 14s ease-in-out infinite alternate;
+    animation: sgKenBurnsMobile 7s linear infinite alternate;
   }
 
   .sg-hero__overlay {
@@ -124,7 +124,7 @@
     transform: scale(1.06) translate(0, 0);
   }
   100% {
-    transform: scale(1.12) translate(-0.5%, -0.5%);
+    transform: scale(1.14) translate(-1.2%, -0.8%);
   }
 }
 
@@ -139,7 +139,7 @@
   .sg-hero__bg {
     background-position: center 42%;
     transform-origin: center center;
-    animation: sgKenBurnsPhone 18s ease-in-out infinite alternate;
+    animation: sgKenBurnsPhone 9s linear infinite alternate;
   }
 
   .sg-hero__title {
@@ -157,6 +157,6 @@
     transform: scale(1.12) translate(0, 0);
   }
   100% {
-    transform: scale(1.28) translate(-2.5%, -2%);
+    transform: scale(1.3) translate(-2.5%, -1.5%);
   }
 }

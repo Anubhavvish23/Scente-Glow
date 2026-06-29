@@ -1,7 +1,12 @@
 .sg-product-skeleton {
   min-height: 100vh;
   background: #ffffff;
-  padding: 68px 6vw 56px;
+  padding: 20px 6vw 56px;
+}
+
+.sg-product-skeleton__header {
+  max-width: 1000px;
+  margin: 0 auto 20px;
 }
 
 .sg-product-skeleton__back {

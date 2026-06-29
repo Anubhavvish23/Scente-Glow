@@ -3,7 +3,9 @@ import "./ProductPageSkeleton.css";
 function ProductPageSkeleton() {
   return (
     <div className="sg-product-skeleton">
-      <div className="sg-product-skeleton__back" />
+      <div className="sg-product-skeleton__header">
+        <div className="sg-product-skeleton__back" />
+      </div>
       <div className="sg-product-skeleton__layout">
         <div className="sg-product-skeleton__gallery" />
         <div className="sg-product-skeleton__panel">

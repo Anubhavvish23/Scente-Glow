@@ -5,6 +5,7 @@ import { useProductSheet } from "../../context/ProductSheetContext";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useToast } from "../../context/ToastContext";
 import { format_price } from "../../utils/pricing";
+import { format_customization_summary } from "../../utils/customization";
 import { get_whatsapp_order_url } from "../../utils/whatsapp";
 import EmptyState from "../empty/EmptyState";
 import "./CartDrawer.css";
@@ -84,7 +85,7 @@ function CartDrawer() {
           <>
             <ul className="sg-cart__items">
               {cart_items.map((item) => (
-                <li key={item.product_id} className="sg-cart__item">
+                <li key={item.line_id || item.product_id} className="sg-cart__item">
                   <button
                     type="button"
                     className="sg-cart__item-img-wrap"
@@ -100,19 +101,38 @@ function CartDrawer() {
                     >
                       {item.name}
                     </button>
-                    <p className="sg-cart__item-scent">{item.scent}</p>
+                    <p className="sg-cart__item-scent">{item.fragrance || item.scent}</p>
+                    {item.customization && (
+                      <p className="sg-cart__item-customization">
+                        {format_customization_summary(item.customization)}
+                      </p>
+                    )}
                     <p className="sg-cart__item-price">{format_price(item.price)}</p>
                     <div className="sg-cart__qty">
                       <button
                         type="button"
-                        onClick={() => update_quantity(item.product_id, item.quantity - 1)}
+                        onClick={() =>
+                          update_quantity(
+                            item.product_id,
+                            item.quantity - 1,
+                            item.fragrance,
+                            item.customization
+                          )
+                        }
                       >
                         −
                       </button>
                       <span>{item.quantity}</span>
                       <button
                         type="button"
-                        onClick={() => update_quantity(item.product_id, item.quantity + 1)}
+                        onClick={() =>
+                          update_quantity(
+                            item.product_id,
+                            item.quantity + 1,
+                            item.fragrance,
+                            item.customization
+                          )
+                        }
                       >
                         +
                       </button>
@@ -121,7 +141,9 @@ function CartDrawer() {
                   <button
                     type="button"
                     className="sg-cart__remove"
-                    onClick={() => remove_from_cart(item.product_id)}
+                    onClick={() =>
+                      remove_from_cart(item.product_id, item.fragrance, item.customization)
+                    }
                     aria-label={`Remove ${item.name}`}
                   >
                     ×

@@ -226,6 +226,10 @@
   text-decoration: none;
   color: inherit;
   cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  caret-color: transparent;
 }
 
 .sg-shop__card-media {

@@ -5,7 +5,7 @@ import Footer from "../../components/footer/Footer";
 import "./About.css";
 
 const about_img = "/about/e1256a022_generated_bebe330e.png";
-const detail_img = "/about/b231a77a8_generated_b6b6f734.png";
+const detail_img = "/logo.png";
 const lifestyle_img = "/about/b96c96116_generated_a1986ec2.png";
 
 const values = [
@@ -82,8 +82,8 @@ function About() {
           </div>
           <ParallaxSection
             src={detail_img}
-            alt="Close-up of candle wax texture"
-            className="sg-about__parallax--square"
+            alt="Scenté Glow"
+            className="sg-about__parallax--square sg-about__parallax--logo"
           />
         </div>
       </section>

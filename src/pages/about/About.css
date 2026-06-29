@@ -123,6 +123,15 @@
   aspect-ratio: 1;
 }
 
+.sg-about__parallax--logo {
+  background: var(--sg-page);
+}
+
+.sg-about__parallax--logo .sg-about__parallax-img {
+  object-fit: contain;
+  padding: 4px;
+}
+
 .sg-about__parallax--tall {
   aspect-ratio: 3 / 4;
 }

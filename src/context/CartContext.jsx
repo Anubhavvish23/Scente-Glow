@@ -1,7 +1,27 @@
 import { createContext, useContext, useMemo, useState } from "react";
+import { customization_matches } from "../utils/customization";
 import { get_coupon_percent } from "../utils/coupons";
 
 const CartContext = createContext(null);
+
+function build_line_id(product_id, fragrance, customization) {
+  const parts = [product_id];
+  if (fragrance) {
+    parts.push(fragrance);
+  }
+  if (customization?.letter && customization?.color_name) {
+    parts.push(`${customization.letter}-${customization.color_name}`);
+  }
+  return parts.join("::");
+}
+
+function matches_cart_line(item, product_id, fragrance, customization) {
+  return (
+    item.product_id === product_id &&
+    (item.fragrance || "") === (fragrance || "") &&
+    customization_matches(item.customization, customization)
+  );
+}
 
 export function CartProvider({ children }) {
   const [cart_items, set_cart_items] = useState([]);
@@ -34,12 +54,14 @@ export function CartProvider({ children }) {
     [cart_subtotal, cart_discount]
   );
 
-  const add_to_cart = (product) => {
+  const add_to_cart = (product, fragrance = "", customization = null) => {
     set_cart_items((prev) => {
-      const existing = prev.find((item) => item.product_id === product.id);
+      const existing = prev.find((item) =>
+        matches_cart_line(item, product.id, fragrance, customization)
+      );
       if (existing) {
         return prev.map((item) =>
-          item.product_id === product.id
+          matches_cart_line(item, product.id, fragrance, customization)
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -47,9 +69,12 @@ export function CartProvider({ children }) {
       return [
         ...prev,
         {
+          line_id: build_line_id(product.id, fragrance, customization),
           product_id: product.id,
           name: product.name,
           scent: product.scent,
+          fragrance,
+          customization,
           price: product.price,
           original_price: product.original_price,
           img: product.img,
@@ -59,18 +84,22 @@ export function CartProvider({ children }) {
     });
   };
 
-  const remove_from_cart = (product_id) => {
-    set_cart_items((prev) => prev.filter((item) => item.product_id !== product_id));
+  const remove_from_cart = (product_id, fragrance = "", customization = null) => {
+    set_cart_items((prev) =>
+      prev.filter((item) => !matches_cart_line(item, product_id, fragrance, customization))
+    );
   };
 
-  const update_quantity = (product_id, quantity) => {
+  const update_quantity = (product_id, quantity, fragrance = "", customization = null) => {
     if (quantity < 1) {
-      remove_from_cart(product_id);
+      remove_from_cart(product_id, fragrance, customization);
       return;
     }
     set_cart_items((prev) =>
       prev.map((item) =>
-        item.product_id === product_id ? { ...item, quantity } : item
+        matches_cart_line(item, product_id, fragrance, customization)
+          ? { ...item, quantity }
+          : item
       )
     );
   };

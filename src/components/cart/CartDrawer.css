@@ -113,6 +113,12 @@
   margin: 4px 0 6px;
 }
 
+.sg-cart__item-customization {
+  font-size: 0.75rem;
+  color: rgba(43, 38, 32, 0.55);
+  margin: 0 0 6px;
+}
+
 .sg-cart__item-price {
   font-size: 0.875rem;
   margin: 0 0 8px;

@@ -5,6 +5,7 @@ import ProductPricing from "../../components/pricing/ProductPricing";
 import ProductImageCarousel from "../../components/product/ProductImageCarousel";
 import RelatedProducts from "../../components/product/RelatedProducts";
 import ProductCartControl from "../../components/product/ProductCartControl";
+import FragranceSelector from "../../components/product/FragranceSelector";
 import ProductPageSkeleton from "../../components/product/ProductPageSkeleton";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useProductSheet } from "../../context/ProductSheetContext";
@@ -19,6 +20,8 @@ function Product() {
   const { open_product_sheet } = useProductSheet();
   const [product, set_product] = useState(null);
   const [loading, set_loading] = useState(true);
+  const [selected_fragrance, set_selected_fragrance] = useState("");
+  const [customization, set_customization] = useState(null);
 
   useEffect(() => {
     if (is_mobile && id) {
@@ -30,6 +33,8 @@ function Product() {
   useEffect(() => {
     if (is_mobile) return;
 
+    set_selected_fragrance("");
+    set_customization(null);
     window.scrollTo(0, 0);
     set_loading(true);
     fetch_product_by_id(id)
@@ -57,11 +62,15 @@ function Product() {
     );
   }
 
+  const whatsapp_url = get_whatsapp_product_url(product, selected_fragrance, customization);
+
   return (
     <div className="sg-product-page">
-      <Link to="/shop" className="sg-product-page__back">
-        ← Back to collection
-      </Link>
+      <div className="sg-product-page__header">
+        <Link to="/shop" className="sg-product-page__back">
+          ← Back to collection
+        </Link>
+      </div>
 
       <div className="sg-product-page__layout">
         <div className="sg-product-page__gallery">
@@ -100,16 +109,36 @@ function Product() {
             <p><span>Wick</span> Cotton, lead-free</p>
           </div>
 
-          <ProductCartControl product={product} variant="page" />
+          <FragranceSelector
+            value={selected_fragrance}
+            on_change={set_selected_fragrance}
+          />
 
-          <a
-            href={get_whatsapp_product_url(product)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="sg-product-page__whatsapp-btn"
-          >
-            Order by WhatsApp
-          </a>
+          <ProductCartControl
+            product={product}
+            variant="page"
+            selected_fragrance={selected_fragrance}
+            customization={customization}
+            on_customization_change={set_customization}
+          />
+
+          {whatsapp_url ? (
+            <a
+              href={whatsapp_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="sg-product-page__whatsapp-btn"
+            >
+              Order by WhatsApp
+            </a>
+          ) : (
+            <span
+              className="sg-product-page__whatsapp-btn sg-product-page__whatsapp-btn--disabled"
+              aria-disabled="true"
+            >
+              Order by WhatsApp
+            </span>
+          )}
         </div>
       </div>
 

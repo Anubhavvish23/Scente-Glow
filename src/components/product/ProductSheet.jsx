@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { fetch_product_by_id } from "../../api/products";
 import ProductImageCarousel from "./ProductImageCarousel";
 import ProductCartControl from "./ProductCartControl";
+import FragranceSelector from "./FragranceSelector";
 import ProductSheetSkeleton from "./ProductSheetSkeleton";
 import RelatedProducts from "./RelatedProducts";
 import ProductPricing from "../pricing/ProductPricing";
@@ -18,6 +19,8 @@ function ProductSheet() {
   const { product_id, close_product_sheet } = useProductSheet();
   const [product, set_product] = useState(null);
   const [loading, set_loading] = useState(false);
+  const [selected_fragrance, set_selected_fragrance] = useState("");
+  const [customization, set_customization] = useState(null);
   const [visible, set_visible] = useState(false);
   const [snap, set_snap] = useState("partial");
   const content_ref = useRef(null);
@@ -41,6 +44,8 @@ function ProductSheet() {
 
     set_snap("partial");
     set_loading(true);
+    set_selected_fragrance("");
+    set_customization(null);
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
@@ -178,6 +183,14 @@ function ProductSheet() {
             onTouchStart={handle_touch_start}
             onTouchEnd={handle_touch_end}
           >
+            <button
+              type="button"
+              className="sg-product-sheet__back"
+              onClick={handle_close}
+            >
+              ← Back to collection
+            </button>
+
             <ProductImageCarousel
               images={[product.img, product.lifestyle]}
               alt={product.name}
@@ -206,16 +219,45 @@ function ProductSheet() {
               ))}
             </ul>
 
-            <ProductCartControl product={product} variant="sheet" />
+            <FragranceSelector
+              value={selected_fragrance}
+              on_change={set_selected_fragrance}
+              className="sg-fragrance-selector--sheet"
+            />
 
-            <a
-              href={get_whatsapp_product_url(product)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="sg-product-sheet__whatsapp-btn"
-            >
-              Order by WhatsApp
-            </a>
+            <ProductCartControl
+              product={product}
+              variant="sheet"
+              selected_fragrance={selected_fragrance}
+              customization={customization}
+              on_customization_change={set_customization}
+            />
+
+            {(() => {
+              const whatsapp_url = get_whatsapp_product_url(
+                product,
+                selected_fragrance,
+                customization
+              );
+
+              return whatsapp_url ? (
+                <a
+                  href={whatsapp_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="sg-product-sheet__whatsapp-btn"
+                >
+                  Order by WhatsApp
+                </a>
+              ) : (
+                <span
+                  className="sg-product-sheet__whatsapp-btn sg-product-sheet__whatsapp-btn--disabled"
+                  aria-disabled="true"
+                >
+                  Order by WhatsApp
+                </span>
+              );
+            })()}
 
             <RelatedProducts current_product={product} />
           </div>
