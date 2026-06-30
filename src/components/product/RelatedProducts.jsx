@@ -4,6 +4,8 @@ import { useProductSheet } from "../../context/ProductSheetContext";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { fetch_products } from "../../api/products";
 import ProductPricing from "../pricing/ProductPricing";
+import ProductHoverImages from "./ProductHoverImages";
+import { get_product_images } from "../../utils/product";
 import "./RelatedProducts.css";
 
 function RelatedProducts({ current_product, variant = "sheet" }) {
@@ -51,9 +53,13 @@ function RelatedProducts({ current_product, variant = "sheet" }) {
             className="sg-related__card"
             onClick={() => handle_click(item.id)}
           >
-            <div className="sg-related__media">
-              <img src={item.img} alt={item.name} />
-            </div>
+            <ProductHoverImages
+              images={get_product_images(item)}
+              alt={item.name}
+              product={item}
+              className="sg-hover-images--related"
+              rating_class_name="sg-product-rating--compact"
+            />
             <p className="sg-related__name">{item.name}</p>
             <ProductPricing
               price={item.price}

@@ -6,6 +6,7 @@ import {
 } from "../utils/bulk_packs";
 import { customization_matches } from "../utils/customization";
 import { get_coupon_percent } from "../utils/coupons";
+import { useSiteSettings } from "./SiteSettingsContext";
 
 const CartContext = createContext(null);
 
@@ -33,6 +34,7 @@ function matches_cart_line(item, product_id, fragrance, customization, bulk_pack
 }
 
 export function CartProvider({ children }) {
+  const { coupon_map } = useSiteSettings();
   const [cart_items, set_cart_items] = useState([]);
   const [cart_open, set_cart_open] = useState(false);
   const [coupon_code, set_coupon_code] = useState("");
@@ -49,8 +51,8 @@ export function CartProvider({ children }) {
   );
 
   const coupon_percent = useMemo(
-    () => get_coupon_percent(coupon_code),
-    [coupon_code]
+    () => get_coupon_percent(coupon_code, coupon_map),
+    [coupon_code, coupon_map]
   );
 
   const cart_discount = useMemo(
@@ -134,7 +136,7 @@ export function CartProvider({ children }) {
 
   const apply_coupon = (code) => {
     const normalized = code.trim().toUpperCase();
-    const percent = get_coupon_percent(normalized);
+    const percent = get_coupon_percent(normalized, coupon_map);
 
     if (!percent) {
       set_coupon_error("Invalid coupon code");

@@ -1,0 +1,108 @@
+.sg-admin-login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(20, 16, 12, 0.55);
+}
+
+.sg-admin-login-modal {
+  position: relative;
+  width: min(100%, 420px);
+  padding: 28px 24px 24px;
+  border-radius: 16px;
+  background: var(--sg-page);
+  color: var(--sg-ink);
+  box-shadow: 0 24px 48px rgba(43, 38, 32, 0.2);
+}
+
+.sg-admin-login-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  border: none;
+  background: transparent;
+  color: var(--sg-ink);
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.sg-admin-login-modal__eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sg-gold);
+}
+
+.sg-admin-login-modal__title {
+  margin: 0 0 8px;
+  font-family: var(--sg-logo-font);
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.sg-admin-login-modal__lead {
+  margin: 0 0 20px;
+  font-size: 0.875rem;
+  color: rgba(43, 38, 32, 0.65);
+}
+
+.sg-admin-login-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sg-admin-login-modal__label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(43, 38, 32, 0.55);
+}
+
+.sg-admin-login-modal__input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(43, 38, 32, 0.14);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--sg-ink);
+  font-size: 0.9375rem;
+  box-sizing: border-box;
+}
+
+.sg-admin-login-modal__input:focus {
+  outline: none;
+  border-color: var(--sg-gold);
+}
+
+.sg-admin-login-modal__error {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #b42318;
+}
+
+.sg-admin-login-modal__submit {
+  margin-top: 8px;
+  padding: 13px 18px;
+  border: none;
+  border-radius: 8px;
+  background: var(--sg-ink);
+  color: #fffaf1;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.sg-admin-login-modal__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

@@ -37,6 +37,7 @@
 }
 
 .sg-related__media {
+  position: relative;
   aspect-ratio: 3 / 4;
   border-radius: 10px;
   overflow: hidden;

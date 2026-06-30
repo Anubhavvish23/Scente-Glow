@@ -1,5 +1,7 @@
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import { normalize_image_links } from "../utils/google_drive";
+import { sort_products_for_display } from "../utils/product_sort";
 
 const retired_product_ids = new Set(["noir-vetiver", "rose-amber", "cedar-moss"]);
 
@@ -329,9 +331,9 @@ function merge_products(firestore_products) {
     }
   }
 
-  return Array.from(by_id.values())
-    .filter((product) => !retired_product_ids.has(product.id))
-    .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+  return sort_products_for_display(
+    Array.from(by_id.values()).filter((product) => !retired_product_ids.has(product.id))
+  );
 }
 
 export async function fetch_products() {
@@ -345,9 +347,9 @@ export async function fetch_products() {
       return merge_products(products);
     }
 
-    return filter_catalog(fallback_products);
+    return sort_products_for_display(filter_catalog(fallback_products));
   } catch {
-    return filter_catalog(fallback_products);
+    return sort_products_for_display(filter_catalog(fallback_products));
   }
 }
 
@@ -368,5 +370,126 @@ export async function fetch_product_by_id(id) {
 
   return (
     filter_catalog(fallback_products).find((product) => product.id === id) || null
+  );
+}
+
+function slugify_product_id(name) {
+  return String(name || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function parse_details_text(details_text) {
+  return String(details_text || "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function validate_product_input(product_input) {
+  if (!product_input.name?.trim()) {
+    throw new Error("Product title is required.");
+  }
+
+  const categories = Array.isArray(product_input.categories)
+    ? product_input.categories.filter(Boolean)
+    : [];
+
+  if (categories.length === 0) {
+    throw new Error("Select at least one category.");
+  }
+
+  const price = Number(product_input.price);
+  if (!Number.isFinite(price) || price < 0) {
+    throw new Error("Enter a valid price.");
+  }
+
+  return { categories, price };
+}
+
+function build_product_payload(product_input) {
+  const { categories, price } = validate_product_input(product_input);
+  const images = normalize_image_links(product_input.image_links);
+  const details = parse_details_text(product_input.details_text);
+  const original_price_raw = product_input.original_price;
+  const original_price =
+    original_price_raw === "" || original_price_raw == null
+      ? undefined
+      : Number(original_price_raw);
+
+  const rating_raw = product_input.rating;
+  let rating = null;
+  if (rating_raw !== "" && rating_raw != null) {
+    const parsed_rating = Number(rating_raw);
+    if (Number.isFinite(parsed_rating) && parsed_rating > 0 && parsed_rating <= 5) {
+      rating = Math.round(parsed_rating * 10) / 10;
+    }
+  }
+
+  const payload = {
+    name: product_input.name.trim(),
+    scent: product_input.scent?.trim() || "Hand-poured · Scenté Glow",
+    description: product_input.description?.trim() || "",
+    price,
+    categories,
+    category: categories[0],
+    images,
+    img: images[0] || "",
+    lifestyle: images[1] || images[0] || "",
+    weight: product_input.weight?.trim() || "",
+    burn_time: product_input.burn_time?.trim() || "",
+    details_heading: product_input.details_heading?.trim() || "",
+    details,
+    rating,
+    featured: Boolean(product_input.featured),
+    active: product_input.active !== false,
+    updated_at: Date.now(),
+  };
+
+  if (original_price != null && Number.isFinite(original_price) && original_price > price) {
+    payload.original_price = original_price;
+  }
+
+  return payload;
+}
+
+export async function create_product(product_input) {
+  const product_id = slugify_product_id(product_input.name);
+
+  if (!product_id) {
+    throw new Error("Could not create a product id from this title.");
+  }
+
+  const existing = await getDoc(doc(db, "products", product_id));
+  if (existing.exists()) {
+    throw new Error("A product with this title already exists.");
+  }
+
+  const payload = build_product_payload(product_input);
+  await setDoc(doc(db, "products", product_id), payload, { merge: false });
+  return { id: product_id, ...payload };
+}
+
+export async function update_product(product_id, product_input) {
+  if (!product_id) {
+    throw new Error("Product not found.");
+  }
+
+  const payload = build_product_payload(product_input);
+  await setDoc(doc(db, "products", product_id), payload, { merge: true });
+  return { id: product_id, ...payload };
+}
+
+export async function delete_product(product_id) {
+  if (!product_id) {
+    throw new Error("Product not found.");
+  }
+
+  await setDoc(
+    doc(db, "products", product_id),
+    { active: false, updated_at: Date.now() },
+    { merge: true }
   );
 }

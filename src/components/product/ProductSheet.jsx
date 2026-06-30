@@ -12,6 +12,7 @@ import { useProductSheet } from "../../context/ProductSheetContext";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { get_whatsapp_product_url } from "../../utils/whatsapp";
 import { get_product_details, get_product_images } from "../../utils/product";
+import { get_product_category_label } from "../../utils/product_categories";
 import {
   get_default_bulk_pack,
   get_line_original_price,
@@ -199,11 +200,12 @@ function ProductSheet() {
               images={get_product_images(product)}
               alt={product.name}
               compact
+              product={product}
             />
 
             <h2 className="sg-product-sheet__name">{product.name.toUpperCase()}</h2>
-            {product.category && (
-              <p className="sg-product-sheet__category">{product.category}</p>
+            {get_product_category_label(product) && (
+              <p className="sg-product-sheet__category">{get_product_category_label(product)}</p>
             )}
             <p className="sg-product-sheet__scent">{product.scent}</p>
 

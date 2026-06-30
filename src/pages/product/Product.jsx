@@ -12,6 +12,7 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import { useProductSheet } from "../../context/ProductSheetContext";
 import { get_whatsapp_product_url } from "../../utils/whatsapp";
 import { get_product_details, get_product_images } from "../../utils/product";
+import { get_product_category_label } from "../../utils/product_categories";
 import {
   get_default_bulk_pack,
   get_line_original_price,
@@ -96,12 +97,13 @@ function Product() {
           <ProductImageCarousel
             images={get_product_images(product)}
             alt={product.name}
+            product={product}
           />
         </div>
 
         <div className="sg-product-page__panel">
           <p className="sg-product-page__eyebrow">
-            {product.category || "Hand-poured candle"}
+            {get_product_category_label(product) || "Hand-poured candle"}
           </p>
           <h1 className="sg-product-page__name">{product.name.toUpperCase()}</h1>
           <p className="sg-product-page__scent">{product.scent}</p>

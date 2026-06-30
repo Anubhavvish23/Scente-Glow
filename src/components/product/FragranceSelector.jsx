@@ -1,12 +1,16 @@
-import { dummy_fragrances } from "../../utils/fragrances";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
+import { default_fragrances } from "../../utils/fragrances";
 import "./FragranceSelector.css";
 
 function FragranceSelector({ value, on_change, className = "" }) {
+  const { fragrances } = useSiteSettings();
+  const options = fragrances.length > 0 ? fragrances : default_fragrances;
+
   return (
     <div className={`sg-fragrance-selector ${className}`.trim()}>
       <p className="sg-fragrance-selector__label">Fragrance</p>
       <div className="sg-fragrance-selector__options">
-        {dummy_fragrances.map((fragrance) => {
+        {options.map((fragrance) => {
           const is_active = value === fragrance;
 
           return (

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import ProductRatingBadge from "./ProductRatingBadge";
 import "./ProductImageCarousel.css";
 
 function ProductImageCarousel({
@@ -6,11 +7,14 @@ function ProductImageCarousel({
   alt,
   className = "",
   compact = false,
+  product,
+  rating,
 }) {
   const valid_images = images.filter(Boolean);
   const [active_index, set_active_index] = useState(0);
   const [drag_offset, set_drag_offset] = useState(0);
   const [is_dragging, set_is_dragging] = useState(false);
+  const [hovered, set_hovered] = useState(false);
   const drag_start_x = useRef(0);
   const pause_until = useRef(0);
   const container_ref = useRef(null);
@@ -26,13 +30,15 @@ function ProductImageCarousel({
   useEffect(() => {
     if (valid_images.length <= 1) return undefined;
 
+    const interval_ms = hovered ? 900 : 3000;
+
     const interval = window.setInterval(() => {
       if (Date.now() < pause_until.current || is_dragging) return;
       set_active_index((prev) => (prev + 1) % valid_images.length);
-    }, 3000);
+    }, interval_ms);
 
     return () => window.clearInterval(interval);
-  }, [valid_images.length, is_dragging]);
+  }, [valid_images.length, is_dragging, hovered]);
 
   const on_pointer_down = (event) => {
     if (valid_images.length <= 1) return;
@@ -78,7 +84,14 @@ function ProductImageCarousel({
       onPointerMove={on_pointer_move}
       onPointerUp={finish_drag}
       onPointerCancel={finish_drag}
+      onMouseEnter={() => set_hovered(true)}
+      onMouseLeave={() => set_hovered(false)}
     >
+      <ProductRatingBadge
+        product={product}
+        rating={rating}
+        className="sg-product-rating--carousel"
+      />
       <div
         className={`sg-product-carousel__track ${is_dragging ? "sg-product-carousel__track--dragging" : ""}`}
         style={{
@@ -86,7 +99,7 @@ function ProductImageCarousel({
         }}
       >
         {valid_images.map((src, index) => (
-          <div key={src} className="sg-product-carousel__slide">
+          <div key={`${src}-${index}`} className="sg-product-carousel__slide">
             <img src={src} alt={`${alt} ${index + 1}`} draggable={false} />
           </div>
         ))}
@@ -96,7 +109,7 @@ function ProductImageCarousel({
         <div className="sg-product-carousel__dots">
           {valid_images.map((src, index) => (
             <button
-              key={src}
+              key={`${src}-${index}`}
               type="button"
               className={`sg-product-carousel__dot ${index === active_index ? "sg-product-carousel__dot--active" : ""}`}
               onClick={() => {

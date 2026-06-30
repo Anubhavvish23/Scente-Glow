@@ -7,13 +7,20 @@ import EmptyState from "../../components/empty/EmptyState";
 import { useProductSheet } from "../../context/ProductSheetContext";
 import { useSearch } from "../../context/SearchContext";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import {
+  collect_product_categories,
+  get_product_category_label,
+  product_matches_category,
+} from "../../utils/product_categories";
+import { get_product_images } from "../../utils/product";
+import ProductHoverImages from "../../components/product/ProductHoverImages";
 import "./Shop.css";
 
 function ProductCard({ product }) {
-  const [hovered, set_hovered] = useState(false);
   const { open_product_sheet } = useProductSheet();
   const is_mobile = useIsMobile();
   const navigate = useNavigate();
+  const images = get_product_images(product);
 
   const handle_click = () => {
     if (is_mobile) {
@@ -27,27 +34,19 @@ function ProductCard({ product }) {
     <button
       type="button"
       className="sg-shop__card"
-      onMouseEnter={() => set_hovered(true)}
-      onMouseLeave={() => set_hovered(false)}
       onClick={handle_click}
     >
-      <div className="sg-shop__card-media">
-        <img
-          src={product.img}
-          alt={product.name}
-          className={`sg-shop__card-img ${hovered ? "sg-shop__card-img--hidden" : ""}`}
-        />
-        <img
-          src={product.lifestyle}
-          alt={`${product.name} lifestyle`}
-          className={`sg-shop__card-img sg-shop__card-img--lifestyle ${hovered ? "sg-shop__card-img--visible" : ""}`}
-        />
-      </div>
+      <ProductHoverImages
+        images={images}
+        alt={product.name}
+        product={product}
+        className="sg-hover-images--shop"
+      />
       <div className="sg-shop__card-info">
         <div>
           <h3 className="sg-shop__card-name">{product.name}</h3>
-          {product.category && (
-            <p className="sg-shop__card-category">{product.category}</p>
+          {get_product_category_label(product) && (
+            <p className="sg-shop__card-category">{get_product_category_label(product)}</p>
           )}
           <p className="sg-shop__card-scent">{product.scent}</p>
           <ProductPricing
@@ -102,32 +101,26 @@ function ShopSection({ embedded = false, limit = 4 }) {
 
   const query = embedded ? "" : search_query.trim().toLowerCase();
 
-  const categories = embedded
-    ? []
-    : [
-        "All",
-        ...Array.from(
-          new Set(
-            products
-              .map((product) => product.category)
-              .filter((category) => category && category !== "All Products")
-          )
-        ).sort((a, b) => a.localeCompare(b)),
-      ];
+  const categories = embedded ? [] : ["All", ...collect_product_categories(products)];
 
   const category_products =
     embedded || selected_category === "All"
       ? products
-      : products.filter((product) => product.category === selected_category);
+      : products.filter((product) => product_matches_category(product, selected_category));
 
   const filtered_products = query
-    ? category_products.filter(
-        (product) =>
+    ? category_products.filter((product) => {
+        const category_label = get_product_category_label(product).toLowerCase();
+        const categories_text = (product.categories || []).join(" ").toLowerCase();
+
+        return (
           product.name.toLowerCase().includes(query) ||
           (product.scent || "").toLowerCase().includes(query) ||
-          (product.category || "").toLowerCase().includes(query) ||
+          category_label.includes(query) ||
+          categories_text.includes(query) ||
           (product.description || "").toLowerCase().includes(query)
-      )
+        );
+      })
     : category_products;
 
   useEffect(() => {
