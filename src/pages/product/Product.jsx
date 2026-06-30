@@ -5,12 +5,19 @@ import ProductPricing from "../../components/pricing/ProductPricing";
 import ProductImageCarousel from "../../components/product/ProductImageCarousel";
 import RelatedProducts from "../../components/product/RelatedProducts";
 import ProductCartControl from "../../components/product/ProductCartControl";
+import BulkPackSelector from "../../components/product/BulkPackSelector";
 import FragranceSelector from "../../components/product/FragranceSelector";
 import ProductPageSkeleton from "../../components/product/ProductPageSkeleton";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useProductSheet } from "../../context/ProductSheetContext";
 import { get_whatsapp_product_url } from "../../utils/whatsapp";
-import { get_product_details } from "../../utils/product";
+import { get_product_details, get_product_images } from "../../utils/product";
+import {
+  get_default_bulk_pack,
+  get_line_original_price,
+  get_line_price,
+  has_bulk_packs,
+} from "../../utils/bulk_packs";
 import "./Product.css";
 
 function Product() {
@@ -22,6 +29,7 @@ function Product() {
   const [loading, set_loading] = useState(true);
   const [selected_fragrance, set_selected_fragrance] = useState("");
   const [customization, set_customization] = useState(null);
+  const [selected_bulk_pack, set_selected_bulk_pack] = useState(null);
 
   useEffect(() => {
     if (is_mobile && id) {
@@ -35,11 +43,15 @@ function Product() {
 
     set_selected_fragrance("");
     set_customization(null);
+    set_selected_bulk_pack(null);
     window.scrollTo(0, 0);
     set_loading(true);
     fetch_product_by_id(id)
       .then((data) => {
         set_product(data);
+        set_selected_bulk_pack(
+          has_bulk_packs(data) ? get_default_bulk_pack(data) : null
+        );
         set_loading(false);
       })
       .catch(() => {
@@ -62,7 +74,14 @@ function Product() {
     );
   }
 
-  const whatsapp_url = get_whatsapp_product_url(product, selected_fragrance, customization);
+  const whatsapp_url = get_whatsapp_product_url(
+    product,
+    selected_fragrance,
+    customization,
+    selected_bulk_pack
+  );
+  const display_price = get_line_price(product, selected_bulk_pack);
+  const display_original_price = get_line_original_price(product, selected_bulk_pack);
 
   return (
     <div className="sg-product-page">
@@ -75,7 +94,7 @@ function Product() {
       <div className="sg-product-page__layout">
         <div className="sg-product-page__gallery">
           <ProductImageCarousel
-            images={[product.img, product.lifestyle]}
+            images={get_product_images(product)}
             alt={product.name}
           />
         </div>
@@ -88,8 +107,8 @@ function Product() {
           <p className="sg-product-page__scent">{product.scent}</p>
 
           <ProductPricing
-            price={product.price}
-            original_price={product.original_price}
+            price={display_price}
+            original_price={display_original_price}
           />
 
           <p className="sg-product-page__description">
@@ -97,7 +116,12 @@ function Product() {
               "Hand-poured in small batches using 100% natural soy wax, lead-free cotton wicks, and fine fragrance oils for a clean, even burn."}
           </p>
 
-          <ul className="sg-product-page__details">
+          {product.details_heading && (
+            <h2 className="sg-product-page__details-heading">{product.details_heading}</h2>
+          )}
+          <ul
+            className={`sg-product-page__details${product.details_heading ? " sg-product-page__details--hearts" : ""}`}
+          >
             {get_product_details(product).map((detail) => (
               <li key={detail}>{detail}</li>
             ))}
@@ -108,6 +132,12 @@ function Product() {
             <p><span>Burn time</span> {product.burn_time || "45–50 hours"}</p>
             <p><span>Wick</span> Cotton, lead-free</p>
           </div>
+
+          <BulkPackSelector
+            product={product}
+            value={selected_bulk_pack}
+            on_change={set_selected_bulk_pack}
+          />
 
           <FragranceSelector
             value={selected_fragrance}
@@ -120,6 +150,7 @@ function Product() {
             selected_fragrance={selected_fragrance}
             customization={customization}
             on_customization_change={set_customization}
+            selected_bulk_pack={selected_bulk_pack}
           />
 
           {whatsapp_url ? (

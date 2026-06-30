@@ -3,6 +3,11 @@ import {
   format_customization_whatsapp_lines,
   is_letter_customizable,
 } from "./customization";
+import {
+  format_bulk_pack_summary,
+  get_line_price,
+  has_bulk_packs,
+} from "./bulk_packs";
 
 const whatsapp_number = "917406903913";
 
@@ -21,9 +26,11 @@ export function build_whatsapp_order_message(cart_items, cart_total, options = {
   const item_lines = cart_items.flatMap((item, index) => {
     const line_total = item.price * item.quantity;
     const customization_lines = format_customization_whatsapp_lines(item.customization);
+    const bulk_pack_summary = format_bulk_pack_summary(item.bulk_pack);
     return [
       `${index + 1}. ${item.name}`,
       `   ${format_fragrance_line(item.fragrance, item.scent)}`,
+      ...(bulk_pack_summary ? [`   ${bulk_pack_summary}`] : []),
       ...customization_lines.map((line) => `   ${line}`),
       `   Qty: ${item.quantity} - ${format_price(line_total)}`,
       "",
@@ -56,7 +63,12 @@ export function get_whatsapp_order_url(cart_items, cart_total, options = {}) {
   return `https://wa.me/${whatsapp_number}?text=${encodeURIComponent(message)}`;
 }
 
-export function get_whatsapp_product_url(product, fragrance = "", customization = null) {
+export function get_whatsapp_product_url(
+  product,
+  fragrance = "",
+  customization = null,
+  bulk_pack = null
+) {
   if (!fragrance) {
     return null;
   }
@@ -65,7 +77,13 @@ export function get_whatsapp_product_url(product, fragrance = "", customization 
     return null;
   }
 
+  if (has_bulk_packs(product) && !bulk_pack) {
+    return null;
+  }
+
   const customization_lines = format_customization_whatsapp_lines(customization);
+  const bulk_pack_summary = format_bulk_pack_summary(bulk_pack);
+  const price = get_line_price(product, bulk_pack);
   const message = [
     "Hello Scenté Glow,",
     "",
@@ -73,8 +91,9 @@ export function get_whatsapp_product_url(product, fragrance = "", customization 
     "",
     product.name,
     `Fragrance: ${fragrance}`,
+    ...(bulk_pack_summary ? [bulk_pack_summary] : []),
     ...customization_lines,
-    `Qty: 1 - ${format_price(product.price)}`,
+    `Qty: 1 - ${format_price(price)}`,
     "",
     "Please confirm availability and delivery details. Thank you!",
   ].join("\n");

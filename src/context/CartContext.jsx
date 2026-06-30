@@ -1,10 +1,15 @@
 import { createContext, useContext, useMemo, useState } from "react";
+import {
+  bulk_pack_matches,
+  get_line_original_price,
+  get_line_price,
+} from "../utils/bulk_packs";
 import { customization_matches } from "../utils/customization";
 import { get_coupon_percent } from "../utils/coupons";
 
 const CartContext = createContext(null);
 
-function build_line_id(product_id, fragrance, customization) {
+function build_line_id(product_id, fragrance, customization, bulk_pack) {
   const parts = [product_id];
   if (fragrance) {
     parts.push(fragrance);
@@ -12,14 +17,18 @@ function build_line_id(product_id, fragrance, customization) {
   if (customization?.letter && customization?.color_name) {
     parts.push(`${customization.letter}-${customization.color_name}`);
   }
+  if (bulk_pack?.id) {
+    parts.push(bulk_pack.id);
+  }
   return parts.join("::");
 }
 
-function matches_cart_line(item, product_id, fragrance, customization) {
+function matches_cart_line(item, product_id, fragrance, customization, bulk_pack) {
   return (
     item.product_id === product_id &&
     (item.fragrance || "") === (fragrance || "") &&
-    customization_matches(item.customization, customization)
+    customization_matches(item.customization, customization) &&
+    bulk_pack_matches(item.bulk_pack, bulk_pack)
   );
 }
 
@@ -54,14 +63,19 @@ export function CartProvider({ children }) {
     [cart_subtotal, cart_discount]
   );
 
-  const add_to_cart = (product, fragrance = "", customization = null) => {
+  const add_to_cart = (
+    product,
+    fragrance = "",
+    customization = null,
+    bulk_pack = null
+  ) => {
     set_cart_items((prev) => {
       const existing = prev.find((item) =>
-        matches_cart_line(item, product.id, fragrance, customization)
+        matches_cart_line(item, product.id, fragrance, customization, bulk_pack)
       );
       if (existing) {
         return prev.map((item) =>
-          matches_cart_line(item, product.id, fragrance, customization)
+          matches_cart_line(item, product.id, fragrance, customization, bulk_pack)
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -69,14 +83,15 @@ export function CartProvider({ children }) {
       return [
         ...prev,
         {
-          line_id: build_line_id(product.id, fragrance, customization),
+          line_id: build_line_id(product.id, fragrance, customization, bulk_pack),
           product_id: product.id,
           name: product.name,
           scent: product.scent,
           fragrance,
           customization,
-          price: product.price,
-          original_price: product.original_price,
+          bulk_pack,
+          price: get_line_price(product, bulk_pack),
+          original_price: get_line_original_price(product, bulk_pack),
           img: product.img,
           quantity: 1,
         },
@@ -84,20 +99,33 @@ export function CartProvider({ children }) {
     });
   };
 
-  const remove_from_cart = (product_id, fragrance = "", customization = null) => {
+  const remove_from_cart = (
+    product_id,
+    fragrance = "",
+    customization = null,
+    bulk_pack = null
+  ) => {
     set_cart_items((prev) =>
-      prev.filter((item) => !matches_cart_line(item, product_id, fragrance, customization))
+      prev.filter(
+        (item) => !matches_cart_line(item, product_id, fragrance, customization, bulk_pack)
+      )
     );
   };
 
-  const update_quantity = (product_id, quantity, fragrance = "", customization = null) => {
+  const update_quantity = (
+    product_id,
+    quantity,
+    fragrance = "",
+    customization = null,
+    bulk_pack = null
+  ) => {
     if (quantity < 1) {
-      remove_from_cart(product_id, fragrance, customization);
+      remove_from_cart(product_id, fragrance, customization, bulk_pack);
       return;
     }
     set_cart_items((prev) =>
       prev.map((item) =>
-        matches_cart_line(item, product_id, fragrance, customization)
+        matches_cart_line(item, product_id, fragrance, customization, bulk_pack)
           ? { ...item, quantity }
           : item
       )

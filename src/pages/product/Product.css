@@ -143,6 +143,16 @@
   line-height: 1.65;
   color: rgba(43, 38, 32, 0.72);
   margin: 0 0 16px;
+  white-space: pre-line;
+}
+
+.sg-product-page__details-heading {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sg-ink);
+  margin: 0 0 12px;
 }
 
 .sg-product-page__details {
@@ -167,6 +177,14 @@
   left: 0;
   color: var(--sg-gold);
   font-weight: 700;
+}
+
+.sg-product-page__details--hearts li {
+  padding-left: 0;
+}
+
+.sg-product-page__details--hearts li::before {
+  display: none;
 }
 
 .sg-product-page__cart-btn {

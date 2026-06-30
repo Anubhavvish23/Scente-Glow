@@ -52,3 +52,7 @@
 .sg-fragrance-selector--sheet {
   margin-bottom: 16px;
 }
+
+.sg-fragrance-selector--sheet .sg-fragrance-selector__options {
+  justify-content: flex-start;
+}

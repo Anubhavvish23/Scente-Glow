@@ -1,11 +1,11 @@
 export const letter_customizable_product_ids = new Set(["heart-whisper-candles"]);
 
 export const customization_colors = [
-  { name: "Blush Pink", hex: "#e8b4b8" },
-  { name: "Ivory Cream", hex: "#f5f0e6" },
-  { name: "Lavender Mist", hex: "#c9b8d9" },
-  { name: "Sage Green", hex: "#b8c9a8" },
-  { name: "Golden Amber", hex: "#d4a574" },
+  { name: "Blush Petal", hex: "#f4a6c1" },
+  { name: "Celestial Blue", hex: "#6baed6" },
+  { name: "Sunset Tangerine", hex: "#f5a623" },
+  { name: "Ruby Flame", hex: "#e63946" },
+  { name: "Emerald Meadow", hex: "#6aab73" },
 ];
 
 export const customization_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");

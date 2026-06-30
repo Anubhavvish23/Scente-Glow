@@ -1,0 +1,97 @@
+.sg-bulk-pack-selector {
+  margin-bottom: 20px;
+}
+
+.sg-bulk-pack-selector__label {
+  margin: 0 0 10px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(43, 38, 32, 0.55);
+}
+
+.sg-bulk-pack-selector__options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sg-bulk-pack-selector__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(43, 38, 32, 0.14);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--sg-ink);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.sg-bulk-pack-selector__option:hover {
+  border-color: var(--sg-gold);
+}
+
+.sg-bulk-pack-selector__option--active {
+  background: var(--sg-ink);
+  border-color: var(--sg-ink);
+  color: #fffaf1;
+}
+
+.sg-bulk-pack-selector__option--active:hover {
+  border-color: var(--sg-ink);
+}
+
+.sg-bulk-pack-selector__option-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.sg-bulk-pack-selector__option-pricing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.sg-bulk-pack-selector__option-price {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.sg-bulk-pack-selector__option-original {
+  font-size: 0.75rem;
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.sg-bulk-pack-selector__option--active .sg-bulk-pack-selector__option-original {
+  opacity: 0.65;
+}
+
+.sg-bulk-pack-selector__option-discount {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sg-gold);
+}
+
+.sg-bulk-pack-selector__option--active .sg-bulk-pack-selector__option-discount {
+  color: #f0d9b8;
+}
+
+.sg-bulk-pack-selector--sheet {
+  margin-bottom: 16px;
+}

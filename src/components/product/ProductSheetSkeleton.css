@@ -1,13 +1,17 @@
 .sg-sheet-skeleton {
-  padding: 8px 15% 32px;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 20px 32px;
+  box-sizing: border-box;
 }
 
 .sg-sheet-skeleton__image {
-  width: 100%;
+  width: min(100%, 300px);
+  max-width: 100%;
+  margin: 0 auto 20px;
   aspect-ratio: 3 / 4;
-  max-height: 52vh;
+  max-height: min(42vh, 360px);
   border-radius: 16px;
-  margin-bottom: 20px;
   background: linear-gradient(
     90deg,
     rgba(43, 38, 32, 0.06) 25%,

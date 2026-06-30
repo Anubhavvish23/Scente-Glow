@@ -6,6 +6,7 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import { useToast } from "../../context/ToastContext";
 import { format_price } from "../../utils/pricing";
 import { format_customization_summary } from "../../utils/customization";
+import { format_bulk_pack_summary } from "../../utils/bulk_packs";
 import { get_whatsapp_order_url } from "../../utils/whatsapp";
 import EmptyState from "../empty/EmptyState";
 import "./CartDrawer.css";
@@ -102,6 +103,11 @@ function CartDrawer() {
                       {item.name}
                     </button>
                     <p className="sg-cart__item-scent">{item.fragrance || item.scent}</p>
+                    {item.bulk_pack && (
+                      <p className="sg-cart__item-customization">
+                        {format_bulk_pack_summary(item.bulk_pack)}
+                      </p>
+                    )}
                     {item.customization && (
                       <p className="sg-cart__item-customization">
                         {format_customization_summary(item.customization)}
@@ -116,7 +122,8 @@ function CartDrawer() {
                             item.product_id,
                             item.quantity - 1,
                             item.fragrance,
-                            item.customization
+                            item.customization,
+                            item.bulk_pack
                           )
                         }
                       >
@@ -130,7 +137,8 @@ function CartDrawer() {
                             item.product_id,
                             item.quantity + 1,
                             item.fragrance,
-                            item.customization
+                            item.customization,
+                            item.bulk_pack
                           )
                         }
                       >
@@ -142,7 +150,12 @@ function CartDrawer() {
                     type="button"
                     className="sg-cart__remove"
                     onClick={() =>
-                      remove_from_cart(item.product_id, item.fragrance, item.customization)
+                      remove_from_cart(
+                        item.product_id,
+                        item.fragrance,
+                        item.customization,
+                        item.bulk_pack
+                      )
                     }
                     aria-label={`Remove ${item.name}`}
                   >

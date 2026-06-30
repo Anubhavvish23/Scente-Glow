@@ -14,3 +14,11 @@ export function get_product_details(product) {
 
   return default_product_details;
 }
+
+export function get_product_images(product) {
+  if (Array.isArray(product?.images) && product.images.length > 0) {
+    return product.images.filter(Boolean);
+  }
+
+  return [product?.img, product?.lifestyle].filter(Boolean);
+}
