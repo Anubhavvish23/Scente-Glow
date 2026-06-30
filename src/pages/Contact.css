@@ -233,31 +233,37 @@
 
 @media (max-width: 899px) {
   .sg-contact__main {
-    min-height: calc(100svh - 76px);
-    max-height: calc(100svh - 76px);
-    overflow: hidden;
-    padding: 14px 16px;
-    align-items: center;
+    min-height: auto;
+    max-height: none;
+    overflow: visible;
+    padding: 20px 16px 40px;
+    padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+    align-items: flex-start;
   }
 
   .sg-contact__layout {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 20px;
+  }
+
+  .sg-contact__eyebrow {
+    margin-bottom: 10px;
   }
 
   .sg-contact__title {
     font-size: 1.75rem;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   .sg-contact__lead {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     font-size: 0.875rem;
-    line-height: 1.5;
+    line-height: 1.55;
+    max-width: none;
   }
 
   .sg-contact__detail-row {
-    padding: 7px 0;
+    padding: 10px 0;
   }
 
   .sg-contact__detail-icon {
@@ -266,24 +272,32 @@
   }
 
   .sg-contact__form-panel {
-    padding: 14px 12px;
+    padding: 16px 14px;
   }
 
   .sg-contact__form {
-    gap: 10px;
+    gap: 12px;
   }
 
   .sg-contact__form-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 8px 10px;
+    gap: 10px 12px;
   }
 
   .sg-contact__textarea {
-    min-height: 56px;
+    min-height: 96px;
+  }
+
+  .sg-contact__form-note {
+    padding-bottom: 4px;
   }
 }
 
 @media (max-width: 480px) {
+  .sg-contact__main {
+    padding-top: 16px;
+  }
+
   .sg-contact__form-grid {
     grid-template-columns: 1fr;
   }
