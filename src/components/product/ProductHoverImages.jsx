@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import ProductRatingBadge from "./ProductRatingBadge";
+import ProductSoldOutBadge from "./ProductSoldOutBadge";
+import { is_product_sold_out } from "../../utils/product";
 import "./ProductHoverImages.css";
 
 function ProductHoverImages({
@@ -39,6 +41,7 @@ function ProductHoverImages({
       onMouseLeave={() => set_hovered(false)}
     >
       <ProductRatingBadge product={product} className={rating_class_name} />
+      {is_product_sold_out(product) && <ProductSoldOutBadge />}
       {display_images.length === 0 ? (
         <div className="sg-hover-images__placeholder" aria-hidden="true" />
       ) : (

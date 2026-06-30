@@ -234,6 +234,14 @@
   caret-color: transparent;
 }
 
+.sg-shop__card--sold-out .sg-shop__card-media {
+  opacity: 0.72;
+}
+
+.sg-shop__card--sold-out .sg-shop__card-name {
+  color: rgba(43, 38, 32, 0.65);
+}
+
 .sg-shop__card-media {
   position: relative;
   aspect-ratio: 3 / 4;

@@ -12,7 +12,7 @@ import {
   get_product_category_label,
   product_matches_category,
 } from "../../utils/product_categories";
-import { get_product_images } from "../../utils/product";
+import { get_product_images, is_product_sold_out } from "../../utils/product";
 import ProductHoverImages from "../../components/product/ProductHoverImages";
 import "./Shop.css";
 
@@ -33,7 +33,7 @@ function ProductCard({ product }) {
   return (
     <button
       type="button"
-      className="sg-shop__card"
+      className={`sg-shop__card${is_product_sold_out(product) ? " sg-shop__card--sold-out" : ""}`}
       onClick={handle_click}
     >
       <div className="sg-shop__card-media">

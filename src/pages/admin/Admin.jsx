@@ -4,6 +4,7 @@ import { fetch_products } from "../../api/products";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminFragranceSection from "../../components/admin/AdminFragranceSection";
+import AdminStatsSection from "../../components/admin/AdminStatsSection";
 import "./Admin.css";
 
 const preview_limit = 5;
@@ -123,6 +124,8 @@ function Admin() {
       </form>
 
       <AdminFragranceSection />
+
+      <AdminStatsSection />
 
       <section className="sg-admin__panel sg-admin__products-preview">
         <h2 className="sg-admin__panel-title sg-admin__panel-title--left">Products</h2>

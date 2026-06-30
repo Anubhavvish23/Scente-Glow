@@ -40,3 +40,7 @@ export function format_product_rating(rating) {
   }
   return value.toFixed(1);
 }
+
+export function is_product_sold_out(product) {
+  return product?.sold_out === true;
+}

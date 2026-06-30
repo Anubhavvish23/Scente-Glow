@@ -161,6 +161,12 @@
   min-width: 0;
 }
 
+@media (max-width: 640px) {
+  .sg-admin__product-row {
+    flex-wrap: wrap;
+  }
+}
+
 .sg-admin__panel-head-actions {
   display: flex;
   align-items: center;
@@ -249,6 +255,87 @@
 
 .sg-admin__fragrances {
   margin-bottom: 20px;
+}
+
+.sg-admin__stats {
+  margin-bottom: 20px;
+}
+
+.sg-admin__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.sg-admin__stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 12px;
+  border: 1px solid rgba(43, 38, 32, 0.1);
+  border-radius: 10px;
+  background: rgba(237, 230, 218, 0.25);
+}
+
+.sg-admin__stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--sg-ink);
+  line-height: 1;
+}
+
+.sg-admin__stat-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(43, 38, 32, 0.55);
+}
+
+.sg-admin__stats-lists {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.sg-admin__stats-heading {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sg-ink);
+}
+
+.sg-admin__stats-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sg-admin__stats-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.8125rem;
+  color: var(--sg-ink);
+}
+
+.sg-admin__stats-list li span:last-child {
+  font-weight: 700;
+  color: var(--sg-gold);
+}
+
+@media (max-width: 860px) {
+  .sg-admin__stats-grid,
+  .sg-admin__stats-lists {
+    grid-template-columns: 1fr;
+  }
 }
 
 .sg-admin__fragrance-form {
@@ -348,6 +435,56 @@
 .sg-admin__banner-input--percent {
   width: 52px;
   -moz-appearance: textfield;
+}
+
+.sg-admin__banner-input--pack-size {
+  width: 56px;
+}
+
+.sg-admin__banner-input--pack-price {
+  width: 72px;
+}
+
+.sg-admin__banner-input--pack-discount {
+  width: 52px;
+}
+
+.sg-admin__banner-text--package {
+  text-align: left;
+  margin: 0;
+}
+
+.sg-admin__package-section {
+  padding: 14px 0 4px;
+  border-top: 1px solid rgba(43, 38, 32, 0.1);
+}
+
+.sg-admin__package-open-btn {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid var(--sg-ink);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--sg-ink);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.sg-admin__package-open-btn:hover {
+  background: var(--sg-ink);
+  color: #fffaf1;
+}
+
+.sg-admin__package-lines {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .sg-admin__banner-input--percent::-webkit-outer-spin-button,

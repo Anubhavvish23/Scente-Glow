@@ -235,6 +235,15 @@
   cursor: not-allowed;
 }
 
+.sg-product-page__sold-out {
+  margin: 0 0 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b42318;
+}
+
 @media (max-width: 860px) {
   .sg-product-page {
     display: none;

@@ -1,3 +1,5 @@
+import { bulk_packs_to_admin_rows, empty_pack_rows } from "./admin_bulk_packs";
+
 export const empty_admin_product_form = {
   name: "",
   scent: "",
@@ -12,6 +14,9 @@ export const empty_admin_product_form = {
   categories: [],
   rating: "",
   featured: false,
+  sold_out: false,
+  packages_visible: false,
+  pack_rows: empty_pack_rows.map((row) => ({ ...row })),
 };
 
 export function product_to_admin_form(product) {
@@ -29,6 +34,9 @@ export function product_to_admin_form(product) {
       ? [product.category]
       : [];
 
+  const pack_rows = bulk_packs_to_admin_rows(product.bulk_packs);
+  const packages_visible = pack_rows.some((row) => row.size || row.price || row.discount_percent);
+
   return {
     name: product.name || "",
     scent: product.scent || "",
@@ -43,5 +51,8 @@ export function product_to_admin_form(product) {
     categories,
     rating: product.rating ?? "",
     featured: Boolean(product.featured),
+    sold_out: Boolean(product.sold_out),
+    packages_visible,
+    pack_rows,
   };
 }

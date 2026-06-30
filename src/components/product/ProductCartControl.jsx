@@ -11,6 +11,7 @@ import {
   is_letter_customizable,
   customization_matches,
 } from "../../utils/customization";
+import { is_product_sold_out } from "../../utils/product";
 import ProductCustomizeModal from "./ProductCustomizeModal";
 import "./ProductCartControl.css";
 
@@ -44,12 +45,16 @@ function ProductCartControl({
       bulk_pack_matches(item.bulk_pack, selected_bulk_pack)
   );
   const quantity = cart_item?.quantity || 0;
+  const sold_out = is_product_sold_out(product);
   const can_add =
+    !sold_out &&
     Boolean(selected_fragrance) &&
     (!needs_customization || Boolean(customization)) &&
     (!needs_bulk_pack || Boolean(selected_bulk_pack));
 
-  const add_label = !selected_fragrance
+  const add_label = sold_out
+    ? "Sold out"
+    : !selected_fragrance
     ? "Select a fragrance"
     : needs_bulk_pack && !selected_bulk_pack
       ? "Select a pack size"
@@ -150,6 +155,7 @@ function ProductCartControl({
             type="button"
             className="sg-product-cart-control__btn"
             onClick={handle_plus}
+            disabled={sold_out}
             aria-label="Increase quantity"
           >
             +

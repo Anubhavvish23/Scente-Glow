@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetch_product_by_id } from "../../api/products";
+import { track_product_view } from "../../api/stats";
 import ProductImageCarousel from "./ProductImageCarousel";
 import ProductCartControl from "./ProductCartControl";
 import BulkPackSelector from "./BulkPackSelector";
@@ -11,7 +12,7 @@ import ProductPricing from "../pricing/ProductPricing";
 import { useProductSheet } from "../../context/ProductSheetContext";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { get_whatsapp_product_url } from "../../utils/whatsapp";
-import { get_product_details, get_product_images } from "../../utils/product";
+import { get_product_details, get_product_images, is_product_sold_out } from "../../utils/product";
 import { get_product_category_label } from "../../utils/product_categories";
 import {
   get_default_bulk_pack,
@@ -64,6 +65,9 @@ function ProductSheet() {
     fetch_product_by_id(product_id)
       .then((data) => {
         set_product(data);
+        if (data?.id) {
+          track_product_view(data.id);
+        }
         set_selected_bulk_pack(
           has_bulk_packs(data) ? get_default_bulk_pack(data) : null
         );
@@ -251,6 +255,10 @@ function ProductSheet() {
               on_customization_change={set_customization}
               selected_bulk_pack={selected_bulk_pack}
             />
+
+            {is_product_sold_out(product) && (
+              <p className="sg-product-sheet__sold-out">This product is currently sold out.</p>
+            )}
 
             {(() => {
               const whatsapp_url = get_whatsapp_product_url(

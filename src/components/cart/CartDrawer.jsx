@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useProductSheet } from "../../context/ProductSheetContext";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useToast } from "../../context/ToastContext";
+import { track_whatsapp_order } from "../../api/stats";
 import { format_price } from "../../utils/pricing";
 import { format_customization_summary } from "../../utils/customization";
 import { format_bulk_pack_summary } from "../../utils/bulk_packs";
@@ -26,12 +27,36 @@ function CartDrawer() {
     update_quantity,
     apply_coupon,
     remove_coupon,
+    is_gift,
+    gift_note,
+    has_sold_out_items,
+    set_is_gift,
+    set_gift_note,
+    sync_cart_availability,
   } = useCart();
   const { open_product_sheet } = useProductSheet();
   const { show_toast } = useToast();
   const is_mobile = useIsMobile();
   const navigate = useNavigate();
   const [coupon_input, set_coupon_input] = useState("");
+
+  useEffect(() => {
+    if (cart_open) {
+      sync_cart_availability();
+    }
+  }, [cart_open, sync_cart_availability]);
+
+  const whatsapp_url = get_whatsapp_order_url(cart_items, cart_total, {
+    cart_subtotal,
+    coupon_code,
+    cart_discount,
+    is_gift,
+    gift_note,
+  });
+
+  const handle_whatsapp_order = () => {
+    track_whatsapp_order();
+  };
 
   const open_product = (product_id) => {
     close_cart();
@@ -114,6 +139,9 @@ function CartDrawer() {
                       </p>
                     )}
                     <p className="sg-cart__item-price">{format_price(item.price)}</p>
+                    {item.sold_out && (
+                      <p className="sg-cart__item-sold-out">Sold out — remove to continue</p>
+                    )}
                     <div className="sg-cart__qty">
                       <button
                         type="button"
@@ -141,6 +169,7 @@ function CartDrawer() {
                             item.bulk_pack
                           )
                         }
+                        disabled={item.sold_out}
                       >
                         +
                       </button>
@@ -165,6 +194,26 @@ function CartDrawer() {
               ))}
             </ul>
             <div className="sg-cart__footer">
+              <div className="sg-cart__gift">
+                <label className="sg-cart__gift-toggle">
+                  <input
+                    type="checkbox"
+                    checked={is_gift}
+                    onChange={(event) => set_is_gift(event.target.checked)}
+                  />
+                  <span>This order is a gift</span>
+                </label>
+                {is_gift && (
+                  <textarea
+                    className="sg-cart__gift-note"
+                    value={gift_note}
+                    onChange={(event) => set_gift_note(event.target.value)}
+                    placeholder="Add a gift message (optional)"
+                    rows={3}
+                  />
+                )}
+              </div>
+
               <div className="sg-cart__coupon">
                 {coupon_code ? (
                   <div className="sg-cart__coupon-applied">
@@ -206,15 +255,18 @@ function CartDrawer() {
                 <span>Total</span>
                 <span>{format_price(cart_total)}</span>
               </div>
+              {has_sold_out_items && (
+                <p className="sg-cart__sold-out-note">
+                  Remove sold out items before ordering.
+                </p>
+              )}
               <a
-                href={get_whatsapp_order_url(cart_items, cart_total, {
-                  cart_subtotal,
-                  coupon_code,
-                  cart_discount,
-                })}
+                href={has_sold_out_items ? undefined : whatsapp_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="sg-cart__whatsapp"
+                className={`sg-cart__whatsapp${has_sold_out_items ? " sg-cart__whatsapp--disabled" : ""}`}
+                onClick={has_sold_out_items ? (event) => event.preventDefault() : handle_whatsapp_order}
+                aria-disabled={has_sold_out_items}
               >
                 Order by WhatsApp
               </a>

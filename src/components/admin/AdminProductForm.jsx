@@ -96,6 +96,20 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
     });
   };
 
+  const update_pack_row = (index, field, value) => {
+    set_form((prev) => {
+      const pack_rows = [...prev.pack_rows];
+      pack_rows[index] = { ...pack_rows[index], [field]: value };
+      return { ...prev, pack_rows };
+    });
+    set_saved(false);
+  };
+
+  const show_packages = () => {
+    set_form((prev) => ({ ...prev, packages_visible: true }));
+    set_saved(false);
+  };
+
   const handle_submit = async (event) => {
     event.preventDefault();
     set_saving(true);
@@ -256,6 +270,9 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
             placeholder="4.8"
           />
         </div>
+      </div>
+
+      <div className="sg-admin__field-row">
         <div className="sg-admin__field sg-admin__field--toggle">
           <span className="sg-admin__label">Featured product</span>
           <label className="sg-admin__banner-toggle" title="Show on top of shop">
@@ -267,7 +284,73 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
             <span className="sg-admin__banner-toggle-track" aria-hidden="true" />
           </label>
         </div>
+        <div className="sg-admin__field sg-admin__field--toggle">
+          <span className="sg-admin__label">Sold out</span>
+          <label className="sg-admin__banner-toggle" title="Mark as sold out on shop">
+            <input
+              type="checkbox"
+              checked={form.sold_out}
+              onChange={(event) => update_field("sold_out", event.target.checked)}
+            />
+            <span className="sg-admin__banner-toggle-track" aria-hidden="true" />
+          </label>
+        </div>
       </div>
+
+      {is_edit && (
+        <div className="sg-admin__field sg-admin__package-section">
+          {!form.packages_visible ? (
+            <button type="button" className="sg-admin__package-open-btn" onClick={show_packages}>
+              Add as package
+            </button>
+          ) : (
+            <>
+              <span className="sg-admin__label">Packages</span>
+              <ul className="sg-admin__package-lines">
+                {form.pack_rows.map((row, index) => (
+                  <li key={`pack-line-${index}`}>
+                    <p className="sg-admin__banner-text sg-admin__banner-text--package">
+                      pack of{" "}
+                      <input
+                        type="number"
+                        min="1"
+                        className="sg-admin__banner-input sg-admin__banner-input--pack-size"
+                        value={row.size}
+                        onChange={(event) => update_pack_row(index, "size", event.target.value)}
+                        placeholder="10"
+                        aria-label={`Package ${index + 1} size`}
+                      />{" "}
+                      at{" "}
+                      <input
+                        type="number"
+                        min="0"
+                        className="sg-admin__banner-input sg-admin__banner-input--pack-price"
+                        value={row.price}
+                        onChange={(event) => update_pack_row(index, "price", event.target.value)}
+                        placeholder="320"
+                        aria-label={`Package ${index + 1} price`}
+                      />{" "}
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        className="sg-admin__banner-input sg-admin__banner-input--pack-discount"
+                        value={row.discount_percent}
+                        onChange={(event) =>
+                          update_pack_row(index, "discount_percent", event.target.value)
+                        }
+                        placeholder="10"
+                        aria-label={`Package ${index + 1} discount`}
+                      />
+                      % off
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+      )}
 
       <div className="sg-admin__field">
         <label className="sg-admin__label" htmlFor="admin-product-details-heading">

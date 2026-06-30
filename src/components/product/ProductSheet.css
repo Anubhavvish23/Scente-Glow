@@ -269,6 +269,15 @@
   cursor: not-allowed;
 }
 
+.sg-product-sheet__sold-out {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b42318;
+}
+
 @media (min-width: 861px) {
   .sg-product-sheet-overlay {
     display: none;

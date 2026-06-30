@@ -2,6 +2,7 @@ import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { normalize_image_links } from "../utils/google_drive";
 import { sort_products_for_display } from "../utils/product_sort";
+import { admin_rows_to_bulk_packs } from "../utils/admin_bulk_packs";
 
 const retired_product_ids = new Set(["noir-vetiver", "rose-amber", "cedar-moss"]);
 
@@ -444,12 +445,17 @@ function build_product_payload(product_input) {
     details,
     rating,
     featured: Boolean(product_input.featured),
+    sold_out: Boolean(product_input.sold_out),
     active: product_input.active !== false,
     updated_at: Date.now(),
   };
 
   if (original_price != null && Number.isFinite(original_price) && original_price > price) {
     payload.original_price = original_price;
+  }
+
+  if (product_input.packages_visible) {
+    payload.bulk_packs = admin_rows_to_bulk_packs(product_input.pack_rows);
   }
 
   return payload;
