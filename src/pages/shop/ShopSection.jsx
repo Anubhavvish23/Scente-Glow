@@ -36,12 +36,14 @@ function ProductCard({ product }) {
       className="sg-shop__card"
       onClick={handle_click}
     >
-      <ProductHoverImages
-        images={images}
-        alt={product.name}
-        product={product}
-        className="sg-hover-images--shop"
-      />
+      <div className="sg-shop__card-media">
+        <ProductHoverImages
+          images={images}
+          alt={product.name}
+          product={product}
+          className="sg-hover-images--fill"
+        />
+      </div>
       <div className="sg-shop__card-info">
         <div>
           <h3 className="sg-shop__card-name">{product.name}</h3>

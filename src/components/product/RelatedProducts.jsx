@@ -53,13 +53,15 @@ function RelatedProducts({ current_product, variant = "sheet" }) {
             className="sg-related__card"
             onClick={() => handle_click(item.id)}
           >
-            <ProductHoverImages
-              images={get_product_images(item)}
-              alt={item.name}
-              product={item}
-              className="sg-hover-images--related"
-              rating_class_name="sg-product-rating--compact"
-            />
+            <div className="sg-related__media">
+              <ProductHoverImages
+                images={get_product_images(item)}
+                alt={item.name}
+                product={item}
+                className="sg-hover-images--fill"
+                rating_class_name="sg-product-rating--compact"
+              />
+            </div>
             <p className="sg-related__name">{item.name}</p>
             <ProductPricing
               price={item.price}

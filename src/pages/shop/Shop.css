@@ -214,11 +214,13 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
+  min-width: 0;
 }
 
 .sg-shop__card {
   display: block;
   width: 100%;
+  min-width: 0;
   padding: 0;
   border: none;
   background: none;

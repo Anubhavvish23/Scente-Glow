@@ -10,7 +10,7 @@ function ProductHoverImages({
   rating_class_name = "",
 }) {
   const valid_images = images.filter(Boolean);
-  const display_images = valid_images.length > 0 ? valid_images : [""];
+  const display_images = valid_images.length > 0 ? valid_images : [];
   const [hovered, set_hovered] = useState(false);
   const [active_index, set_active_index] = useState(0);
 
@@ -39,15 +39,19 @@ function ProductHoverImages({
       onMouseLeave={() => set_hovered(false)}
     >
       <ProductRatingBadge product={product} className={rating_class_name} />
-      {display_images.map((src, index) => (
-        <img
-          key={`${src}-${index}`}
-          src={src}
-          alt={index === 0 ? alt : `${alt} ${index + 1}`}
-          className={`sg-hover-images__img${index === active_index ? " sg-hover-images__img--active" : ""}`}
-          draggable={false}
-        />
-      ))}
+      {display_images.length === 0 ? (
+        <div className="sg-hover-images__placeholder" aria-hidden="true" />
+      ) : (
+        display_images.map((src, index) => (
+          <img
+            key={`${src}-${index}`}
+            src={src}
+            alt={index === 0 ? alt : `${alt} ${index + 1}`}
+            className={`sg-hover-images__img${index === active_index ? " sg-hover-images__img--active" : ""}`}
+            draggable={false}
+          />
+        ))
+      )}
     </div>
   );
 }
