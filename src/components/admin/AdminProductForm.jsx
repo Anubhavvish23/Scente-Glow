@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { create_product, fetch_product_by_id, update_product } from "../../api/products";
 import { empty_admin_product_form, product_to_admin_form } from "../../utils/admin_product";
+import { normalize_hex } from "../../utils/colours";
 import { product_category_options } from "../../utils/product_categories";
 
 const empty_image_row = "";
@@ -12,6 +13,8 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
   const [saving, set_saving] = useState(false);
   const [saved, set_saved] = useState(false);
   const [error, set_error] = useState("");
+  const [new_colour_name, set_new_colour_name] = useState("");
+  const [new_colour_hex, set_new_colour_hex] = useState("#f4a6c1");
 
   useEffect(() => {
     if (!is_edit || !product_id) {
@@ -110,11 +113,58 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
     set_saved(false);
   };
 
+  const add_colour = () => {
+    const name = new_colour_name.trim();
+    const hex = normalize_hex(new_colour_hex);
+
+    if (!name) {
+      set_error("Enter a colour name.");
+      return;
+    }
+
+    if (!hex) {
+      set_error("Pick a valid colour.");
+      return;
+    }
+
+    const exists = form.custom_colours.some(
+      (item) => item.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (exists) {
+      set_error("This colour already exists for this product.");
+      return;
+    }
+
+    set_form((prev) => ({
+      ...prev,
+      custom_colours: [...prev.custom_colours, { name, hex }],
+    }));
+    set_new_colour_name("");
+    set_new_colour_hex("#f4a6c1");
+    set_saved(false);
+    set_error("");
+  };
+
+  const remove_colour = (name) => {
+    set_form((prev) => ({
+      ...prev,
+      custom_colours: prev.custom_colours.filter((item) => item.name !== name),
+    }));
+    set_saved(false);
+  };
+
   const handle_submit = async (event) => {
     event.preventDefault();
     set_saving(true);
     set_saved(false);
     set_error("");
+
+    if (form.colours_enabled && form.custom_colours.length === 0) {
+      set_error("Add at least one colour or turn off colour options.");
+      set_saving(false);
+      return;
+    }
 
     try {
       if (is_edit) {
@@ -296,6 +346,70 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
           </label>
         </div>
       </div>
+
+      {is_edit && (
+        <div className="sg-admin__field sg-admin__colour-section">
+          <div className="sg-admin__field sg-admin__field--toggle sg-admin__field--toggle-inline">
+            <span className="sg-admin__label">Colour options</span>
+            <label className="sg-admin__banner-toggle" title="Let customers pick a wax colour">
+              <input
+                type="checkbox"
+                checked={form.colours_enabled}
+                onChange={(event) => update_field("colours_enabled", event.target.checked)}
+              />
+              <span className="sg-admin__banner-toggle-track" aria-hidden="true" />
+            </label>
+          </div>
+
+          {form.colours_enabled && (
+            <>
+              <div className="sg-admin__colour-row">
+                <input
+                  type="color"
+                  className="sg-admin__colour-picker"
+                  value={new_colour_hex}
+                  onChange={(event) => set_new_colour_hex(event.target.value)}
+                  aria-label="Colour swatch"
+                />
+                <input
+                  type="text"
+                  className="sg-admin__input"
+                  value={new_colour_name}
+                  onChange={(event) => set_new_colour_name(event.target.value)}
+                  placeholder="Blush Petal"
+                  aria-label="Colour name"
+                />
+                <button type="button" className="sg-admin__save" onClick={add_colour}>
+                  Add
+                </button>
+              </div>
+
+              {form.custom_colours.length > 0 && (
+                <ul className="sg-admin__colour-list">
+                  {form.custom_colours.map((colour) => (
+                    <li key={colour.name} className="sg-admin__colour-item">
+                      <span
+                        className="sg-admin__colour-swatch"
+                        style={{ backgroundColor: colour.hex }}
+                        aria-hidden="true"
+                      />
+                      <span>{colour.name}</span>
+                      <button
+                        type="button"
+                        className="sg-admin__colour-remove"
+                        onClick={() => remove_colour(colour.name)}
+                        aria-label={`Remove ${colour.name}`}
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
       {is_edit && (
         <div className="sg-admin__field sg-admin__package-section">

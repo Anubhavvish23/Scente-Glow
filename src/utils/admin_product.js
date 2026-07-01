@@ -1,4 +1,5 @@
 import { bulk_packs_to_admin_rows, empty_pack_rows } from "./admin_bulk_packs";
+import { normalize_colours } from "./colours";
 
 export const empty_admin_product_form = {
   name: "",
@@ -17,6 +18,8 @@ export const empty_admin_product_form = {
   sold_out: false,
   packages_visible: false,
   pack_rows: empty_pack_rows.map((row) => ({ ...row })),
+  colours_enabled: false,
+  custom_colours: [],
 };
 
 export function product_to_admin_form(product) {
@@ -36,6 +39,7 @@ export function product_to_admin_form(product) {
 
   const pack_rows = bulk_packs_to_admin_rows(product.bulk_packs);
   const packages_visible = pack_rows.some((row) => row.size || row.price || row.discount_percent);
+  const custom_colours = normalize_colours(product.custom_colours);
 
   return {
     name: product.name || "",
@@ -54,5 +58,7 @@ export function product_to_admin_form(product) {
     sold_out: Boolean(product.sold_out),
     packages_visible,
     pack_rows,
+    colours_enabled: custom_colours.length > 0,
+    custom_colours,
   };
 }

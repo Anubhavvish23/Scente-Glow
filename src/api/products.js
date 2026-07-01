@@ -3,6 +3,7 @@ import { db } from "../firebase";
 import { normalize_image_links } from "../utils/google_drive";
 import { sort_products_for_display } from "../utils/product_sort";
 import { admin_rows_to_bulk_packs } from "../utils/admin_bulk_packs";
+import { normalize_colours } from "../utils/colours";
 
 const retired_product_ids = new Set(["noir-vetiver", "rose-amber", "cedar-moss"]);
 
@@ -456,6 +457,12 @@ function build_product_payload(product_input) {
 
   if (product_input.packages_visible) {
     payload.bulk_packs = admin_rows_to_bulk_packs(product_input.pack_rows);
+  }
+
+  if (product_input.colours_enabled) {
+    payload.custom_colours = normalize_colours(product_input.custom_colours);
+  } else {
+    payload.custom_colours = [];
   }
 
   return payload;

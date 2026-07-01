@@ -124,6 +124,7 @@ function ProductCartControl({
           )}
           <ProductCustomizeModal
             open={customize_open}
+            product={product}
             initial_value={customization}
             on_close={() => set_customize_open(false)}
             on_confirm={on_customization_change}

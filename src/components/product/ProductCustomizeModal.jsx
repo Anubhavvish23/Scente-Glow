@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import {
-  customization_colors,
-  customization_letters,
-} from "../../utils/customization";
+import { customization_letters, get_product_colours } from "../../utils/customization";
 import "./ProductCustomizeModal.css";
 
-function ProductCustomizeModal({ open, initial_value, on_close, on_confirm }) {
+function ProductCustomizeModal({ open, product, initial_value, on_close, on_confirm }) {
+  const colour_options = get_product_colours(product);
   const [selected_letter, set_selected_letter] = useState("");
   const [selected_color, set_selected_color] = useState(null);
 
@@ -15,9 +13,9 @@ function ProductCustomizeModal({ open, initial_value, on_close, on_confirm }) {
     }
     set_selected_letter(initial_value?.letter || "");
     set_selected_color(
-      customization_colors.find((color) => color.name === initial_value?.color_name) || null
+      colour_options.find((color) => color.name === initial_value?.color_name) || null
     );
-  }, [open, initial_value]);
+  }, [open, initial_value, colour_options]);
 
   useEffect(() => {
     if (!open) {
@@ -86,7 +84,7 @@ function ProductCustomizeModal({ open, initial_value, on_close, on_confirm }) {
         <div className="sg-customize-modal__section">
           <p className="sg-customize-modal__label">Colour</p>
           <div className="sg-customize-modal__colors">
-            {customization_colors.map((color) => {
+            {colour_options.map((color) => {
               const is_active = selected_color?.name === color.name;
 
               return (
