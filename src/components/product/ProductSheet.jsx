@@ -14,12 +14,7 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import { get_whatsapp_product_url } from "../../utils/whatsapp";
 import { get_product_details, get_product_images, is_product_sold_out } from "../../utils/product";
 import { get_product_category_label } from "../../utils/product_categories";
-import {
-  get_default_bulk_pack,
-  get_line_original_price,
-  get_line_price,
-  has_bulk_packs,
-} from "../../utils/bulk_packs";
+import { has_bulk_packs } from "../../utils/bulk_packs";
 import "./ProductSheet.css";
 
 function ProductSheet() {
@@ -68,9 +63,6 @@ function ProductSheet() {
         if (data?.id) {
           track_product_view(data.id);
         }
-        set_selected_bulk_pack(
-          has_bulk_packs(data) ? get_default_bulk_pack(data) : null
-        );
         set_loading(false);
       })
       .catch(() => {
@@ -165,6 +157,8 @@ function ProductSheet() {
 
   if (!is_mobile || !product_id) return null;
 
+  const product_has_packs = product ? has_bulk_packs(product) : false;
+
   return (
     <div
       className={`sg-product-sheet-overlay ${visible ? "sg-product-sheet-overlay--visible" : ""}`}
@@ -213,10 +207,20 @@ function ProductSheet() {
             )}
             <p className="sg-product-sheet__scent">{product.scent}</p>
 
-            <ProductPricing
-              price={get_line_price(product, selected_bulk_pack)}
-              original_price={get_line_original_price(product, selected_bulk_pack)}
-            />
+            {product_has_packs ? (
+              <BulkPackSelector
+                product={product}
+                value={selected_bulk_pack}
+                on_change={set_selected_bulk_pack}
+                reveal_prices_on_click
+                className="sg-bulk-pack-selector--hero sg-bulk-pack-selector--sheet"
+              />
+            ) : (
+              <ProductPricing
+                price={product.price}
+                original_price={product.original_price}
+              />
+            )}
 
             <p className="sg-product-sheet__description">
               {product.description ||
@@ -233,13 +237,6 @@ function ProductSheet() {
                 <li key={detail}>{detail}</li>
               ))}
             </ul>
-
-            <BulkPackSelector
-              product={product}
-              value={selected_bulk_pack}
-              on_change={set_selected_bulk_pack}
-              className="sg-bulk-pack-selector--sheet"
-            />
 
             <FragranceSelector
               value={selected_fragrance}

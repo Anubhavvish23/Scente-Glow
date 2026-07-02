@@ -92,6 +92,22 @@
   color: #f0d9b8;
 }
 
-.sg-bulk-pack-selector--sheet {
-  margin-bottom: 16px;
+.sg-bulk-pack-selector--hero {
+  margin-bottom: 12px;
+}
+
+.sg-bulk-pack-selector--sheet.sg-bulk-pack-selector--hero {
+  margin-bottom: 12px;
+}
+
+.sg-bulk-pack-selector__option-hint {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(43, 38, 32, 0.45);
+}
+
+.sg-bulk-pack-selector__option--active .sg-bulk-pack-selector__option-hint {
+  color: rgba(255, 250, 241, 0.72);
 }

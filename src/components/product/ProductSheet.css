@@ -177,7 +177,8 @@
   margin: 0 0 16px;
 }
 
-.sg-product-sheet__content .sg-pricing {
+.sg-product-sheet__content .sg-pricing,
+.sg-product-sheet__content .sg-bulk-pack-selector--hero {
   margin-bottom: 12px;
 }
 

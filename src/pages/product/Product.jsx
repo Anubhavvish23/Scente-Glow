@@ -14,12 +14,7 @@ import { useProductSheet } from "../../context/ProductSheetContext";
 import { get_whatsapp_product_url } from "../../utils/whatsapp";
 import { get_product_details, get_product_images, is_product_sold_out } from "../../utils/product";
 import { get_product_category_label } from "../../utils/product_categories";
-import {
-  get_default_bulk_pack,
-  get_line_original_price,
-  get_line_price,
-  has_bulk_packs,
-} from "../../utils/bulk_packs";
+import { has_bulk_packs } from "../../utils/bulk_packs";
 import "./Product.css";
 
 function Product() {
@@ -54,9 +49,6 @@ function Product() {
         if (data?.id) {
           track_product_view(data.id);
         }
-        set_selected_bulk_pack(
-          has_bulk_packs(data) ? get_default_bulk_pack(data) : null
-        );
         set_loading(false);
       })
       .catch(() => {
@@ -85,8 +77,7 @@ function Product() {
     customization,
     selected_bulk_pack
   );
-  const display_price = get_line_price(product, selected_bulk_pack);
-  const display_original_price = get_line_original_price(product, selected_bulk_pack);
+  const product_has_packs = has_bulk_packs(product);
 
   return (
     <div className="sg-product-page">
@@ -112,10 +103,20 @@ function Product() {
           <h1 className="sg-product-page__name">{product.name.toUpperCase()}</h1>
           <p className="sg-product-page__scent">{product.scent}</p>
 
-          <ProductPricing
-            price={display_price}
-            original_price={display_original_price}
-          />
+          {product_has_packs ? (
+            <BulkPackSelector
+              product={product}
+              value={selected_bulk_pack}
+              on_change={set_selected_bulk_pack}
+              reveal_prices_on_click
+              className="sg-bulk-pack-selector--hero"
+            />
+          ) : (
+            <ProductPricing
+              price={product.price}
+              original_price={product.original_price}
+            />
+          )}
 
           <p className="sg-product-page__description">
             {product.description ||
@@ -138,12 +139,6 @@ function Product() {
             <p><span>Burn time</span> {product.burn_time || "45–50 hours"}</p>
             <p><span>Wick</span> Cotton, lead-free</p>
           </div>
-
-          <BulkPackSelector
-            product={product}
-            value={selected_bulk_pack}
-            on_change={set_selected_bulk_pack}
-          />
 
           <FragranceSelector
             value={selected_fragrance}
