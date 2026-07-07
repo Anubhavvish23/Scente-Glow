@@ -8,7 +8,7 @@ function FragranceSelector({ value, on_change, className = "" }) {
 
   return (
     <div className={`sg-fragrance-selector ${className}`.trim()}>
-      <p className="sg-fragrance-selector__label">Fragrance</p>
+      <p className="sg-fragrance-selector__label">Select fragrance</p>
       <div className="sg-fragrance-selector__options">
         {options.map((fragrance) => {
           const is_active = value === fragrance;

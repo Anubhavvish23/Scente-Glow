@@ -57,10 +57,18 @@ function ProductCartControl({
 
   const customize_label =
     has_product_letters(product) && has_product_colours(product)
-      ? "Customize letter & colour"
+      ? "Select letter & colour"
       : has_product_letters(product)
-        ? "Customize letter"
-        : "Customize colour";
+        ? "Select letter"
+        : "Select colours";
+
+  const customize_button_label = customization
+    ? has_product_letters(product) && has_product_colours(product)
+      ? "Edit letter & colour"
+      : has_product_letters(product)
+        ? "Edit letter"
+        : "Edit colours"
+    : customize_label;
 
   const add_label = sold_out
     ? "Sold out"
@@ -125,7 +133,7 @@ function ProductCartControl({
             className={`sg-product-cart-control__customize sg-product-cart-control__customize--${variant}`}
             onClick={() => set_customize_open(true)}
           >
-            {customization ? "Edit customization" : "Customize"}
+            {customize_button_label}
           </button>
           {customization && (
             <p className="sg-product-cart-control__customization-summary">
