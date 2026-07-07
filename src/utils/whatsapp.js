@@ -1,6 +1,7 @@
 import { format_price } from "./pricing";
 import {
   format_customization_whatsapp_lines,
+  is_customization_complete,
   is_letter_customizable,
 } from "./customization";
 import {
@@ -82,7 +83,7 @@ export function get_whatsapp_product_url(
     return null;
   }
 
-  if (is_letter_customizable(product) && !customization) {
+  if (is_letter_customizable(product) && !is_customization_complete(customization, product)) {
     return null;
   }
 

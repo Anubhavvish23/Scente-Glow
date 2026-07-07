@@ -465,6 +465,8 @@ function build_product_payload(product_input) {
     payload.custom_colours = [];
   }
 
+  payload.letters_enabled = Boolean(product_input.letters_enabled);
+
   return payload;
 }
 

@@ -20,6 +20,7 @@ export const empty_admin_product_form = {
   pack_rows: empty_pack_rows.map((row) => ({ ...row })),
   colours_enabled: false,
   custom_colours: [],
+  letters_enabled: false,
 };
 
 export function product_to_admin_form(product) {
@@ -60,5 +61,6 @@ export function product_to_admin_form(product) {
     pack_rows,
     colours_enabled: custom_colours.length > 0,
     custom_colours,
+    letters_enabled: Boolean(product.letters_enabled),
   };
 }

@@ -18,8 +18,11 @@ function build_line_id(product_id, fragrance, customization, bulk_pack) {
   if (fragrance) {
     parts.push(fragrance);
   }
-  if (customization?.letter && customization?.color_name) {
-    parts.push(`${customization.letter}-${customization.color_name}`);
+  if (customization?.letter) {
+    parts.push(customization.letter);
+  }
+  if (customization?.color_name) {
+    parts.push(customization.color_name);
   }
   if (bulk_pack?.id) {
     parts.push(bulk_pack.id);

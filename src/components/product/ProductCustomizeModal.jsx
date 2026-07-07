@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
-import { customization_letters, get_product_colours } from "../../utils/customization";
+import {
+  customization_letters,
+  get_product_colours,
+  has_product_colours,
+  has_product_letters,
+} from "../../utils/customization";
 import "./ProductCustomizeModal.css";
 
 function ProductCustomizeModal({ open, product, initial_value, on_close, on_confirm }) {
   const colour_options = get_product_colours(product);
+  const needs_letter = has_product_letters(product);
+  const needs_colour = has_product_colours(product);
   const [selected_letter, set_selected_letter] = useState("");
   const [selected_color, set_selected_color] = useState(null);
 
@@ -43,18 +50,27 @@ function ProductCustomizeModal({ open, product, initial_value, on_close, on_conf
     return null;
   }
 
-  const can_confirm = Boolean(selected_letter && selected_color);
+  const can_confirm =
+    (!needs_letter || Boolean(selected_letter)) &&
+    (!needs_colour || Boolean(selected_color));
 
   const handle_confirm = () => {
     if (!can_confirm) {
       return;
     }
 
-    on_confirm({
-      letter: selected_letter,
-      color_name: selected_color.name,
-      color_hex: selected_color.hex,
-    });
+    const customization = {};
+
+    if (needs_letter && selected_letter) {
+      customization.letter = selected_letter;
+    }
+
+    if (needs_colour && selected_color) {
+      customization.color_name = selected_color.name;
+      customization.color_hex = selected_color.hex;
+    }
+
+    on_confirm(customization);
     on_close();
   };
 
@@ -79,54 +95,64 @@ function ProductCustomizeModal({ open, product, initial_value, on_close, on_conf
         <h2 id="sg-customize-title" className="sg-customize-modal__title">
           Customize your candle
         </h2>
-        <p className="sg-customize-modal__lead">Choose a wax colour and letter for your charm.</p>
+        <p className="sg-customize-modal__lead">
+          {needs_letter && needs_colour
+            ? "Choose a wax colour and letter for your charm."
+            : needs_letter
+              ? "Choose a letter for your charm."
+              : "Choose a wax colour for your charm."}
+        </p>
 
-        <div className="sg-customize-modal__section">
-          <p className="sg-customize-modal__label">Colour</p>
-          <div className="sg-customize-modal__colors">
-            {colour_options.map((color) => {
-              const is_active = selected_color?.name === color.name;
+        {needs_colour && (
+          <div className="sg-customize-modal__section">
+            <p className="sg-customize-modal__label">Colour</p>
+            <div className="sg-customize-modal__colors">
+              {colour_options.map((color) => {
+                const is_active = selected_color?.name === color.name;
 
-              return (
-                <button
-                  key={color.name}
-                  type="button"
-                  className={`sg-customize-modal__color${is_active ? " sg-customize-modal__color--active" : ""}`}
-                  onClick={() => set_selected_color(color)}
-                  aria-pressed={is_active}
-                  aria-label={color.name}
-                >
-                  <span
-                    className="sg-customize-modal__color-swatch"
-                    style={{ backgroundColor: color.hex }}
-                  />
-                  <span className="sg-customize-modal__color-name">{color.name}</span>
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={color.name}
+                    type="button"
+                    className={`sg-customize-modal__color${is_active ? " sg-customize-modal__color--active" : ""}`}
+                    onClick={() => set_selected_color(color)}
+                    aria-pressed={is_active}
+                    aria-label={color.name}
+                  >
+                    <span
+                      className="sg-customize-modal__color-swatch"
+                      style={{ backgroundColor: color.hex }}
+                    />
+                    <span className="sg-customize-modal__color-name">{color.name}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="sg-customize-modal__section">
-          <p className="sg-customize-modal__label">Letter</p>
-          <div className="sg-customize-modal__letters">
-            {customization_letters.map((letter) => {
-              const is_active = selected_letter === letter;
+        {needs_letter && (
+          <div className="sg-customize-modal__section">
+            <p className="sg-customize-modal__label">Letter</p>
+            <div className="sg-customize-modal__letters">
+              {customization_letters.map((letter) => {
+                const is_active = selected_letter === letter;
 
-              return (
-                <button
-                  key={letter}
-                  type="button"
-                  className={`sg-customize-modal__letter${is_active ? " sg-customize-modal__letter--active" : ""}`}
-                  onClick={() => set_selected_letter(letter)}
-                  aria-pressed={is_active}
-                >
-                  {letter}
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={letter}
+                    type="button"
+                    className={`sg-customize-modal__letter${is_active ? " sg-customize-modal__letter--active" : ""}`}
+                    onClick={() => set_selected_letter(letter)}
+                    aria-pressed={is_active}
+                  >
+                    {letter}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         <button
           type="button"

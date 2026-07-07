@@ -8,6 +8,9 @@ import {
 } from "../../utils/bulk_packs";
 import {
   format_customization_summary,
+  has_product_colours,
+  has_product_letters,
+  is_customization_complete,
   is_letter_customizable,
   customization_matches,
 } from "../../utils/customization";
@@ -49,8 +52,15 @@ function ProductCartControl({
   const can_add =
     !sold_out &&
     Boolean(selected_fragrance) &&
-    (!needs_customization || Boolean(customization)) &&
+    (!needs_customization || is_customization_complete(customization, product)) &&
     (!needs_bulk_pack || Boolean(selected_bulk_pack));
+
+  const customize_label =
+    has_product_letters(product) && has_product_colours(product)
+      ? "Customize letter & colour"
+      : has_product_letters(product)
+        ? "Customize letter"
+        : "Customize colour";
 
   const add_label = sold_out
     ? "Sold out"
@@ -58,8 +68,8 @@ function ProductCartControl({
     ? "Select a fragrance"
     : needs_bulk_pack && !selected_bulk_pack
       ? "Select a pack size"
-      : needs_customization && !customization
-        ? "Customize letter & colour"
+      : needs_customization && !is_customization_complete(customization, product)
+        ? customize_label
         : "Add to cart";
 
   const handle_add = () => {

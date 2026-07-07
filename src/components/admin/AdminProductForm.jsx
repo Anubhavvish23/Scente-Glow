@@ -412,6 +412,22 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
       )}
 
       {is_edit && (
+        <div className="sg-admin__field sg-admin__letter-section">
+          <div className="sg-admin__field sg-admin__field--toggle sg-admin__field--toggle-inline">
+            <span className="sg-admin__label">Letter options</span>
+            <label className="sg-admin__banner-toggle" title="Let customers pick a letter">
+              <input
+                type="checkbox"
+                checked={form.letters_enabled}
+                onChange={(event) => update_field("letters_enabled", event.target.checked)}
+              />
+              <span className="sg-admin__banner-toggle-track" aria-hidden="true" />
+            </label>
+          </div>
+        </div>
+      )}
+
+      {is_edit && (
         <div className="sg-admin__field sg-admin__package-section">
           {!form.packages_visible ? (
             <button type="button" className="sg-admin__package-open-btn" onClick={show_packages}>
