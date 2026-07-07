@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   customization_letters,
   get_product_colours,
@@ -8,7 +8,10 @@ import {
 import "./ProductCustomizeModal.css";
 
 function ProductCustomizeModal({ open, product, initial_value, on_close, on_confirm }) {
-  const colour_options = get_product_colours(product);
+  const colour_options = useMemo(
+    () => get_product_colours(product),
+    [product?.id, product?.custom_colours]
+  );
   const needs_letter = has_product_letters(product);
   const needs_colour = has_product_colours(product);
   const [selected_letter, set_selected_letter] = useState("");
@@ -22,7 +25,7 @@ function ProductCustomizeModal({ open, product, initial_value, on_close, on_conf
     set_selected_color(
       colour_options.find((color) => color.name === initial_value?.color_name) || null
     );
-  }, [open, initial_value, colour_options]);
+  }, [open, initial_value?.letter, initial_value?.color_name, colour_options]);
 
   useEffect(() => {
     if (!open) {
