@@ -28,10 +28,10 @@ function ProductCard({ product, on_open }) {
         />
       </div>
       <div className="sg-shop__card-info">
-        <div>
+        <div className="sg-shop__card-info-body">
           <h3 className="sg-shop__card-name">{product.name}</h3>
-          {category_label && <p className="sg-shop__card-category">{category_label}</p>}
-          <p className="sg-shop__card-scent">{product.scent}</p>
+          <p className="sg-shop__card-category">{category_label || "\u00a0"}</p>
+          <p className="sg-shop__card-scent">{product.scent || "\u00a0"}</p>
           <ShopProductPricing product={product} />
         </div>
       </div>

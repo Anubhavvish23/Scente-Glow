@@ -7,9 +7,11 @@ function ShopProductPricing({ product }) {
 
   return (
     <div className="sg-shop__card-pricing">
-      {listing.pack_label && (
-        <p className="sg-shop__card-pack">{listing.pack_label}</p>
-      )}
+      <p
+        className={`sg-shop__card-pack${listing.pack_label ? "" : " sg-shop__card-pack--empty"}`}
+      >
+        {listing.pack_label || "\u00a0"}
+      </p>
       <ProductPricing
         price={listing.price}
         original_price={listing.original_price}

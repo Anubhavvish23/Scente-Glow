@@ -218,7 +218,9 @@
 }
 
 .sg-shop__card {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   width: 100%;
   min-width: 0;
   padding: 0;
@@ -281,8 +283,14 @@
   font-family: var(--sg-font);
   font-size: 1rem;
   font-weight: 400;
+  line-height: 1.35;
   margin: 0 0 4px;
   color: var(--sg-ink);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  min-height: calc(2 * 1.35em);
 }
 
 .sg-shop__card-category {
@@ -291,13 +299,24 @@
   text-transform: uppercase;
   color: var(--sg-gold);
   margin: 0 0 4px;
+  line-height: 1.3;
+  min-height: calc(1 * 1.3em);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sg-shop__card-scent {
   font-size: 0.75rem;
   letter-spacing: 0.08em;
+  line-height: 1.35;
   color: rgba(43, 38, 32, 0.55);
   margin: 0 0 8px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  min-height: calc(1 * 1.35em);
 }
 
 .sg-shop__card-pricing {
@@ -313,6 +332,15 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(43, 38, 32, 0.55);
+  line-height: 1.3;
+  min-height: calc(1 * 1.3em);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sg-shop__card-pack--empty {
+  visibility: hidden;
 }
 
 .sg-shop__card-pricing .sg-pricing {
@@ -320,7 +348,15 @@
 }
 
 .sg-shop__card-info {
-  display: block;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.sg-shop__card-info-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
 .sg-shop__loading {
