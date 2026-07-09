@@ -44,3 +44,23 @@ export function get_default_bulk_pack(product) {
   const packs = get_product_bulk_packs(product);
   return packs[0] ?? null;
 }
+
+export function get_product_listing_pricing(product) {
+  const first_pack = get_default_bulk_pack(product);
+
+  if (first_pack) {
+    return {
+      price: first_pack.price ?? 0,
+      original_price: first_pack.original_price,
+      pack_label: first_pack.label || (first_pack.size ? `Pack of ${first_pack.size}` : ""),
+      has_packs: true,
+    };
+  }
+
+  return {
+    price: product?.price ?? 0,
+    original_price: product?.original_price,
+    pack_label: "",
+    has_packs: false,
+  };
+}

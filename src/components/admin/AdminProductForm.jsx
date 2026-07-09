@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { create_product, fetch_product_by_id, update_product } from "../../api/products";
+import { useProductsCatalog } from "../../context/ProductsCatalogContext";
 import { empty_admin_product_form, product_to_admin_form } from "../../utils/admin_product";
 import { normalize_hex } from "../../utils/colours";
 import { product_category_options } from "../../utils/product_categories";
@@ -8,6 +9,7 @@ const empty_image_row = "";
 
 function AdminProductForm({ mode = "create", product_id = "", on_product_loaded }) {
   const is_edit = mode === "edit";
+  const { refresh_products } = useProductsCatalog();
   const [form, set_form] = useState(empty_admin_product_form);
   const [loading, set_loading] = useState(is_edit);
   const [saving, set_saving] = useState(false);
@@ -173,6 +175,7 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
         await create_product(form);
         set_form(empty_admin_product_form);
       }
+      await refresh_products();
       set_saved(true);
     } catch (submit_error) {
       set_error(submit_error.message || "Could not save product.");

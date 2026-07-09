@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { useCart } from "../../context/CartContext";
 import { useToast } from "../../context/ToastContext";
 import {
@@ -38,60 +38,114 @@ function ProductCartControl({
   const { cart_items, add_to_cart, update_quantity } = useCart();
   const { show_toast } = useToast();
   const [customize_open, set_customize_open] = useState(false);
+
   const needs_customization = is_letter_customizable(product);
   const needs_bulk_pack = has_bulk_packs(product);
-  const cart_item = cart_items.find(
-    (item) =>
-      item.product_id === product.id &&
-      (item.fragrance || "") === selected_fragrance &&
-      customization_matches(item.customization, customization) &&
-      bulk_pack_matches(item.bulk_pack, selected_bulk_pack)
-  );
-  const quantity = cart_item?.quantity || 0;
   const sold_out = is_product_sold_out(product);
-  const can_add =
-    !sold_out &&
-    Boolean(selected_fragrance) &&
-    (!needs_customization || is_customization_complete(customization, product)) &&
-    (!needs_bulk_pack || Boolean(selected_bulk_pack));
 
-  const customize_label =
-    has_product_letters(product) && has_product_colours(product)
-      ? "Select letter & colour"
-      : has_product_letters(product)
-        ? "Select letter"
-        : "Select colours";
+  const cart_item = useMemo(
+    () =>
+      cart_items.find(
+        (item) =>
+          item.product_id === product.id &&
+          (item.fragrance || "") === selected_fragrance &&
+          customization_matches(item.customization, customization) &&
+          bulk_pack_matches(item.bulk_pack, selected_bulk_pack)
+      ),
+    [cart_items, product.id, selected_fragrance, customization, selected_bulk_pack]
+  );
 
-  const customize_button_label = customization
-    ? has_product_letters(product) && has_product_colours(product)
-      ? "Edit letter & colour"
-      : has_product_letters(product)
-        ? "Edit letter"
-        : "Edit colours"
-    : customize_label;
+  const quantity = cart_item?.quantity || 0;
 
-  const add_label = sold_out
-    ? "Sold out"
-    : !selected_fragrance
-    ? "Select a fragrance"
-    : needs_bulk_pack && !selected_bulk_pack
-      ? "Select a pack size"
-      : needs_customization && !is_customization_complete(customization, product)
-        ? customize_label
-        : "Add to cart";
+  const customize_label = useMemo(() => {
+    if (has_product_letters(product) && has_product_colours(product)) {
+      return "Select letter & colour";
+    }
+    if (has_product_letters(product)) {
+      return "Select letter";
+    }
+    return "Select colours";
+  }, [product]);
 
-  const handle_add = () => {
+  const customize_button_label = useMemo(() => {
+    if (!customization) {
+      return customize_label;
+    }
+    if (has_product_letters(product) && has_product_colours(product)) {
+      return "Edit letter & colour";
+    }
+    if (has_product_letters(product)) {
+      return "Edit letter";
+    }
+    return "Edit colours";
+  }, [customization, customize_label, product]);
+
+  const can_add = useMemo(
+    () =>
+      !sold_out &&
+      Boolean(selected_fragrance) &&
+      (!needs_customization || is_customization_complete(customization, product)) &&
+      (!needs_bulk_pack || Boolean(selected_bulk_pack)),
+    [
+      sold_out,
+      selected_fragrance,
+      needs_customization,
+      customization,
+      product,
+      needs_bulk_pack,
+      selected_bulk_pack,
+    ]
+  );
+
+  const add_label = useMemo(() => {
+    if (sold_out) {
+      return "Sold out";
+    }
+    if (!selected_fragrance) {
+      return "Select a fragrance";
+    }
+    if (needs_bulk_pack && !selected_bulk_pack) {
+      return "Select a pack size";
+    }
+    if (needs_customization && !is_customization_complete(customization, product)) {
+      return customize_label;
+    }
+    return "Add to cart";
+  }, [
+    sold_out,
+    selected_fragrance,
+    needs_bulk_pack,
+    selected_bulk_pack,
+    needs_customization,
+    customization,
+    product,
+    customize_label,
+  ]);
+
+  const toast_message = useMemo(
+    () => build_toast_message(product.name, selected_fragrance, customization, selected_bulk_pack),
+    [product.name, selected_fragrance, customization, selected_bulk_pack]
+  );
+
+  const handle_add = useCallback(() => {
     if (!can_add) {
       return;
     }
     add_to_cart(product, selected_fragrance, customization, selected_bulk_pack);
-    show_toast(
-      build_toast_message(product.name, selected_fragrance, customization, selected_bulk_pack)
-    );
+    show_toast(toast_message);
     release_focus();
-  };
+  }, [
+    can_add,
+    add_to_cart,
+    product,
+    selected_fragrance,
+    customization,
+    selected_bulk_pack,
+    show_toast,
+    toast_message,
+  ]);
 
-  const handle_minus = () => {
+  const handle_minus = useCallback(() => {
     update_quantity(
       product.id,
       quantity - 1,
@@ -100,17 +154,22 @@ function ProductCartControl({
       selected_bulk_pack
     );
     release_focus();
-  };
+  }, [
+    update_quantity,
+    product.id,
+    quantity,
+    selected_fragrance,
+    customization,
+    selected_bulk_pack,
+  ]);
 
-  const handle_plus = () => {
+  const handle_plus = useCallback(() => {
     if (!can_add) {
       return;
     }
     if (quantity === 0) {
       add_to_cart(product, selected_fragrance, customization, selected_bulk_pack);
-      show_toast(
-        build_toast_message(product.name, selected_fragrance, customization, selected_bulk_pack)
-      );
+      show_toast(toast_message);
       release_focus();
       return;
     }
@@ -122,7 +181,26 @@ function ProductCartControl({
       selected_bulk_pack
     );
     release_focus();
-  };
+  }, [
+    can_add,
+    quantity,
+    add_to_cart,
+    product,
+    selected_fragrance,
+    customization,
+    selected_bulk_pack,
+    show_toast,
+    toast_message,
+    update_quantity,
+  ]);
+
+  const handle_open_customize = useCallback(() => {
+    set_customize_open(true);
+  }, []);
+
+  const handle_close_customize = useCallback(() => {
+    set_customize_open(false);
+  }, []);
 
   return (
     <div className={`sg-product-cart-control-wrap sg-product-cart-control-wrap--${variant}`}>
@@ -131,7 +209,7 @@ function ProductCartControl({
           <button
             type="button"
             className={`sg-product-cart-control__customize sg-product-cart-control__customize--${variant}`}
-            onClick={() => set_customize_open(true)}
+            onClick={handle_open_customize}
           >
             {customize_button_label}
           </button>
@@ -144,7 +222,7 @@ function ProductCartControl({
             open={customize_open}
             product={product}
             initial_value={customization}
-            on_close={() => set_customize_open(false)}
+            on_close={handle_close_customize}
             on_confirm={on_customization_change}
           />
         </>
@@ -201,4 +279,4 @@ function build_toast_message(name, fragrance, customization, bulk_pack) {
   return `${parts.join(" · ")} added to cart`;
 }
 
-export default ProductCartControl;
+export default memo(ProductCartControl);

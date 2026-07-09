@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
 import { useCart } from "../../context/CartContext";
 import { useProductSheet } from "../../context/ProductSheetContext";
-import { useIsMobile } from "../../hooks/useIsMobile";
 import { useToast } from "../../context/ToastContext";
 import { track_whatsapp_order } from "../../api/stats";
 import { format_price } from "../../utils/pricing";
@@ -34,10 +32,8 @@ function CartDrawer() {
     set_gift_note,
     sync_cart_availability,
   } = useCart();
-  const { open_product_sheet } = useProductSheet();
+  const { open_product } = useProductSheet();
   const { show_toast } = useToast();
-  const is_mobile = useIsMobile();
-  const navigate = useNavigate();
   const [coupon_input, set_coupon_input] = useState("");
 
   useEffect(() => {
@@ -58,14 +54,13 @@ function CartDrawer() {
     track_whatsapp_order();
   };
 
-  const open_product = (product_id) => {
-    close_cart();
-    if (is_mobile) {
-      open_product_sheet(product_id);
-    } else {
-      navigate(`/product/${product_id}`);
-    }
-  };
+  const handle_open_product = useCallback(
+    (product_id) => {
+      close_cart();
+      open_product(product_id);
+    },
+    [close_cart, open_product]
+  );
 
   const handle_apply_coupon = () => {
     const applied = apply_coupon(coupon_input);
@@ -115,7 +110,7 @@ function CartDrawer() {
                   <button
                     type="button"
                     className="sg-cart__item-img-wrap"
-                    onClick={() => open_product(item.product_id)}
+                    onClick={() => handle_open_product(item.product_id)}
                   >
                     <img src={item.img} alt={item.name} className="sg-cart__item-img" />
                   </button>
@@ -123,7 +118,7 @@ function CartDrawer() {
                     <button
                       type="button"
                       className="sg-cart__item-name"
-                      onClick={() => open_product(item.product_id)}
+                      onClick={() => handle_open_product(item.product_id)}
                     >
                       {item.name}
                     </button>

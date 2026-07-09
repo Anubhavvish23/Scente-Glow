@@ -9,6 +9,9 @@ export const default_product_details = [
   "Reusable glass jar",
 ];
 
+export const default_product_description =
+  "Hand-poured in small batches using 100% natural soy wax, lead-free cotton wicks, and fine fragrance oils for a clean, even burn.";
+
 export function get_product_details(product) {
   if (Array.isArray(product?.details) && product.details.length > 0) {
     return product.details;

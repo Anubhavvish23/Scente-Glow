@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   fetch_fragrances,
   fetch_sale_banner_settings,
@@ -57,30 +57,41 @@ export function SiteSettingsProvider({ children }) {
     [sale_banner_settings]
   );
 
-  const update_sale_banner = async (next_settings) => {
+  const update_sale_banner = useCallback(async (next_settings) => {
     const saved = await save_sale_banner_settings(next_settings);
     set_sale_banner_settings(saved);
     return saved;
-  };
+  }, []);
 
-  const update_fragrances = async (items) => {
+  const update_fragrances = useCallback(async (items) => {
     const saved = await save_fragrances(items);
     set_fragrances(saved);
     return saved;
-  };
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      loading,
+      sale_banner_settings,
+      sale_banner_message,
+      coupon_map,
+      fragrances,
+      update_sale_banner,
+      update_fragrances,
+    }),
+    [
+      loading,
+      sale_banner_settings,
+      sale_banner_message,
+      coupon_map,
+      fragrances,
+      update_sale_banner,
+      update_fragrances,
+    ]
+  );
 
   return (
-    <SiteSettingsContext.Provider
-      value={{
-        loading,
-        sale_banner_settings,
-        sale_banner_message,
-        coupon_map,
-        fragrances,
-        update_sale_banner,
-        update_fragrances,
-      }}
-    >
+    <SiteSettingsContext.Provider value={value}>
       {children}
     </SiteSettingsContext.Provider>
   );

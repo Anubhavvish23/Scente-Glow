@@ -1,46 +1,31 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { memo, useCallback, useMemo } from "react";
 import { useProductSheet } from "../../context/ProductSheetContext";
-import { useIsMobile } from "../../hooks/useIsMobile";
-import { fetch_products } from "../../api/products";
-import ProductPricing from "../pricing/ProductPricing";
+import { useProductsCatalog } from "../../context/ProductsCatalogContext";
+import ShopProductPricing from "../shop/ShopProductPricing";
 import ProductHoverImages from "./ProductHoverImages";
 import { get_product_images } from "../../utils/product";
+import { get_related_products } from "../../utils/shop_products";
 import "./RelatedProducts.css";
 
 function RelatedProducts({ current_product, variant = "sheet" }) {
-  const [related, set_related] = useState([]);
-  const { open_product_sheet } = useProductSheet();
-  const navigate = useNavigate();
-  const is_mobile = useIsMobile();
+  const { products } = useProductsCatalog();
+  const { open_product } = useProductSheet();
 
-  useEffect(() => {
-    if (!current_product) return;
+  const related = useMemo(
+    () => get_related_products(products, current_product),
+    [products, current_product]
+  );
 
-    fetch_products().then((products) => {
-      const scent_tag = (current_product.scent || "").split("·")[0].trim().toLowerCase();
-      const items = products
-        .filter((item) => item.id !== current_product.id)
-        .sort((a, b) => {
-          const a_match = (a.scent || "").toLowerCase().includes(scent_tag) ? 0 : 1;
-          const b_match = (b.scent || "").toLowerCase().includes(scent_tag) ? 0 : 1;
-          return a_match - b_match;
-        })
-        .slice(0, 4);
+  const handle_click = useCallback(
+    (item_id) => {
+      open_product(item_id);
+    },
+    [open_product]
+  );
 
-      set_related(items);
-    });
-  }, [current_product]);
-
-  if (related.length === 0) return null;
-
-  const handle_click = (item_id) => {
-    if (is_mobile) {
-      open_product_sheet(item_id);
-      return;
-    }
-    navigate(`/product/${item_id}`);
-  };
+  if (related.length === 0) {
+    return null;
+  }
 
   return (
     <section className={`sg-related ${variant === "page" ? "sg-related--page" : ""}`}>
@@ -63,11 +48,7 @@ function RelatedProducts({ current_product, variant = "sheet" }) {
               />
             </div>
             <p className="sg-related__name">{item.name}</p>
-            <ProductPricing
-              price={item.price}
-              original_price={item.original_price}
-              compact
-            />
+            <ShopProductPricing product={item} />
           </button>
         ))}
       </div>
@@ -75,4 +56,4 @@ function RelatedProducts({ current_product, variant = "sheet" }) {
   );
 }
 
-export default RelatedProducts;
+export default memo(RelatedProducts);

@@ -8,6 +8,7 @@ import SaleBanner from "./components/banner/SaleBanner";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminSecretGate from "./components/admin/AdminSecretGate";
 import { AdminProvider } from "./context/AdminContext";
+import { ProductsCatalogProvider } from "./context/ProductsCatalogContext";
 import { SiteSettingsProvider } from "./context/SiteSettingsContext";
 import { CartProvider } from "./context/CartContext";
 import { SearchProvider } from "./context/SearchContext";
@@ -31,10 +32,11 @@ function App() {
   return (
     <ToastProvider>
       <SiteSettingsProvider>
-        <AdminProvider>
-          <SearchProvider>
-            <CartProvider>
-              <ProductSheetProvider>
+        <ProductsCatalogProvider>
+          <AdminProvider>
+            <SearchProvider>
+              <CartProvider>
+                <ProductSheetProvider>
                 <ScrollToTop />
                 <AdminSecretGate />
                 {!is_admin_route && <SaleBanner />}
@@ -48,6 +50,7 @@ function App() {
             </CartProvider>
           </SearchProvider>
         </AdminProvider>
+        </ProductsCatalogProvider>
       </SiteSettingsProvider>
     </ToastProvider>
   );

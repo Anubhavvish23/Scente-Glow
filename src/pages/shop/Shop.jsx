@@ -1,5 +1,5 @@
 import Footer from "../../components/footer/Footer";
-import ShopSection from "./ShopSection";
+import ShopSection from "../../components/shop/ShopSection";
 import "./Shop.css";
 
 function Shop() {

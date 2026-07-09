@@ -1,31 +1,29 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetch_product_by_id } from "../../api/products";
-import { track_product_view } from "../../api/stats";
 import ProductImageCarousel from "./ProductImageCarousel";
-import ProductCartControl from "./ProductCartControl";
-import BulkPackSelector from "./BulkPackSelector";
-import FragranceSelector from "./FragranceSelector";
+import ProductDetailPanel from "./ProductDetailPanel";
 import ProductSheetSkeleton from "./ProductSheetSkeleton";
 import RelatedProducts from "./RelatedProducts";
-import ProductPricing from "../pricing/ProductPricing";
 import { useProductSheet } from "../../context/ProductSheetContext";
 import { useIsMobile } from "../../hooks/useIsMobile";
-import { get_whatsapp_product_url } from "../../utils/whatsapp";
-import { get_product_details, get_product_images, is_product_sold_out } from "../../utils/product";
-import { get_product_category_label } from "../../utils/product_categories";
-import { has_bulk_packs } from "../../utils/bulk_packs";
+import { useProductDetail } from "../../hooks/useProductDetail";
+import { get_product_images } from "../../utils/product";
 import "./ProductSheet.css";
 
 function ProductSheet() {
   const is_mobile = useIsMobile();
   const navigate = useNavigate();
   const { product_id, close_product_sheet } = useProductSheet();
-  const [product, set_product] = useState(null);
-  const [loading, set_loading] = useState(false);
-  const [selected_fragrance, set_selected_fragrance] = useState("");
-  const [customization, set_customization] = useState(null);
-  const [selected_bulk_pack, set_selected_bulk_pack] = useState(null);
+  const {
+    product,
+    loading,
+    selected_fragrance,
+    set_selected_fragrance,
+    customization,
+    set_customization,
+    selected_bulk_pack,
+    set_selected_bulk_pack,
+  } = useProductDetail(product_id, { enabled: Boolean(product_id && is_mobile) });
   const [visible, set_visible] = useState(false);
   const [snap, set_snap] = useState("partial");
   const content_ref = useRef(null);
@@ -42,32 +40,15 @@ function ProductSheet() {
   useEffect(() => {
     if (!product_id || !is_mobile) {
       set_visible(false);
-      set_product(null);
       set_snap("partial");
       return undefined;
     }
 
     set_snap("partial");
-    set_loading(true);
-    set_selected_fragrance("");
-    set_customization(null);
-    set_selected_bulk_pack(null);
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
-
-    fetch_product_by_id(product_id)
-      .then((data) => {
-        set_product(data);
-        if (data?.id) {
-          track_product_view(data.id);
-        }
-        set_loading(false);
-      })
-      .catch(() => {
-        set_loading(false);
-      });
 
     document.body.style.overflow = "hidden";
     requestAnimationFrame(() => {
@@ -79,15 +60,18 @@ function ProductSheet() {
     };
   }, [product_id, is_mobile]);
 
-  const handle_close = () => {
+  const handle_close = useCallback(() => {
     set_visible(false);
     set_snap("partial");
     window.setTimeout(close_product_sheet, 320);
-  };
+  }, [close_product_sheet]);
 
   const run_snap_action = useCallback(
     (action) => {
-      if (snap_lock.current) return;
+      if (snap_lock.current) {
+        return;
+      }
+
       snap_lock.current = true;
       window.setTimeout(() => {
         snap_lock.current = false;
@@ -109,7 +93,9 @@ function ProductSheet() {
   const handle_wheel = useCallback(
     (event) => {
       const el = content_ref.current;
-      if (!el || el.scrollTop > 2) return;
+      if (!el || el.scrollTop > 2) {
+        return;
+      }
 
       if (event.deltaY < 0 && snap === "partial") {
         event.preventDefault();
@@ -127,37 +113,46 @@ function ProductSheet() {
     [snap, run_snap_action]
   );
 
-  const handle_touch_start = (event) => {
+  const handle_touch_start = useCallback((event) => {
     touch_start_y.current = event.touches[0].clientY;
-  };
+  }, []);
 
-  const handle_touch_end = (event) => {
-    const el = content_ref.current;
-    if (!el || el.scrollTop > 2) return;
+  const handle_touch_end = useCallback(
+    (event) => {
+      const el = content_ref.current;
+      if (!el || el.scrollTop > 2) {
+        return;
+      }
 
-    const delta = event.changedTouches[0].clientY - touch_start_y.current;
-    if (Math.abs(delta) < 45) return;
+      const delta = event.changedTouches[0].clientY - touch_start_y.current;
+      if (Math.abs(delta) < 45) {
+        return;
+      }
 
-    if (delta < 0 && snap === "partial") {
-      run_snap_action("expand");
-    } else if (delta > 0 && snap === "full") {
-      run_snap_action("collapse");
-    } else if (delta > 0 && snap === "partial") {
-      run_snap_action("close");
-    }
-  };
+      if (delta < 0 && snap === "partial") {
+        run_snap_action("expand");
+      } else if (delta > 0 && snap === "full") {
+        run_snap_action("collapse");
+      } else if (delta > 0 && snap === "partial") {
+        run_snap_action("close");
+      }
+    },
+    [snap, run_snap_action]
+  );
 
   useEffect(() => {
     const el = content_ref.current;
-    if (!el || !product) return undefined;
+    if (!el || !product) {
+      return undefined;
+    }
 
     el.addEventListener("wheel", handle_wheel, { passive: false });
     return () => el.removeEventListener("wheel", handle_wheel);
   }, [handle_wheel, product]);
 
-  if (!is_mobile || !product_id) return null;
-
-  const product_has_packs = product ? has_bulk_packs(product) : false;
+  if (!is_mobile || !product_id) {
+    return null;
+  }
 
   return (
     <div
@@ -166,7 +161,7 @@ function ProductSheet() {
     >
       <div
         className={`sg-product-sheet ${visible ? "sg-product-sheet--visible" : ""} ${snap === "full" ? "sg-product-sheet--full" : "sg-product-sheet--partial"}`}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
       >
@@ -201,88 +196,16 @@ function ProductSheet() {
               product={product}
             />
 
-            <h2 className="sg-product-sheet__name">{product.name.toUpperCase()}</h2>
-            {get_product_category_label(product) && (
-              <p className="sg-product-sheet__category">{get_product_category_label(product)}</p>
-            )}
-            <p className="sg-product-sheet__scent">{product.scent}</p>
-
-            {product_has_packs ? (
-              <BulkPackSelector
-                product={product}
-                value={selected_bulk_pack}
-                on_change={set_selected_bulk_pack}
-                reveal_prices_on_click
-                className="sg-bulk-pack-selector--hero sg-bulk-pack-selector--sheet"
-              />
-            ) : (
-              <ProductPricing
-                price={product.price}
-                original_price={product.original_price}
-              />
-            )}
-
-            <p className="sg-product-sheet__description">
-              {product.description ||
-                "Hand-poured in small batches using 100% natural soy wax, lead-free cotton wicks, and fine fragrance oils for a clean, even burn."}
-            </p>
-
-            {product.details_heading && (
-              <h3 className="sg-product-sheet__details-heading">{product.details_heading}</h3>
-            )}
-            <ul
-              className={`sg-product-sheet__details${product.details_heading ? " sg-product-sheet__details--hearts" : ""}`}
-            >
-              {get_product_details(product).map((detail) => (
-                <li key={detail}>{detail}</li>
-              ))}
-            </ul>
-
-            <FragranceSelector
-              value={selected_fragrance}
-              on_change={set_selected_fragrance}
-              className="sg-fragrance-selector--sheet"
-            />
-
-            <ProductCartControl
+            <ProductDetailPanel
               product={product}
               variant="sheet"
               selected_fragrance={selected_fragrance}
+              on_fragrance_change={set_selected_fragrance}
               customization={customization}
               on_customization_change={set_customization}
               selected_bulk_pack={selected_bulk_pack}
+              on_bulk_pack_change={set_selected_bulk_pack}
             />
-
-            {is_product_sold_out(product) && (
-              <p className="sg-product-sheet__sold-out">This product is currently sold out.</p>
-            )}
-
-            {(() => {
-              const whatsapp_url = get_whatsapp_product_url(
-                product,
-                selected_fragrance,
-                customization,
-                selected_bulk_pack
-              );
-
-              return whatsapp_url ? (
-                <a
-                  href={whatsapp_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="sg-product-sheet__whatsapp-btn"
-                >
-                  Order by WhatsApp
-                </a>
-              ) : (
-                <span
-                  className="sg-product-sheet__whatsapp-btn sg-product-sheet__whatsapp-btn--disabled"
-                  aria-disabled="true"
-                >
-                  Order by WhatsApp
-                </span>
-              );
-            })()}
 
             <RelatedProducts current_product={product} />
           </div>

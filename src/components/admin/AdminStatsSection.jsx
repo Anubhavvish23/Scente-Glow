@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { fetch_products } from "../../api/products";
+import { useEffect, useMemo, useState } from "react";
 import { fetch_stats_summary } from "../../api/stats";
+import { useProductsCatalog } from "../../context/ProductsCatalogContext";
 
 function format_stat_label(key, product_names, is_product = false) {
   if (is_product) {
@@ -10,22 +10,23 @@ function format_stat_label(key, product_names, is_product = false) {
 }
 
 function AdminStatsSection() {
+  const { products } = useProductsCatalog();
   const [stats, set_stats] = useState(null);
-  const [product_names, set_product_names] = useState({});
   const [loading, set_loading] = useState(true);
+  const product_names = useMemo(
+    () => Object.fromEntries(products.map((product) => [product.id, product.name])),
+    [products]
+  );
 
   useEffect(() => {
     let active = true;
 
-    Promise.all([fetch_stats_summary(), fetch_products()])
-      .then(([stats_data, products]) => {
+    fetch_stats_summary()
+      .then((stats_data) => {
         if (!active) {
           return;
         }
-
-        const names = Object.fromEntries(products.map((product) => [product.id, product.name]));
         set_stats(stats_data);
-        set_product_names(names);
         set_loading(false);
       })
       .catch(() => {

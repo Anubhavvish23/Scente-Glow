@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
-import { fetch_products } from "../api/products";
 import { track_cart_add } from "../api/stats";
 import {
   bulk_pack_matches,
@@ -9,6 +8,7 @@ import {
 import { customization_matches } from "../utils/customization";
 import { is_product_sold_out } from "../utils/product";
 import { get_coupon_percent } from "../utils/coupons";
+import { useProductsCatalog } from "./ProductsCatalogContext";
 import { useSiteSettings } from "./SiteSettingsContext";
 
 const CartContext = createContext(null);
@@ -41,6 +41,7 @@ function matches_cart_line(item, product_id, fragrance, customization, bulk_pack
 
 export function CartProvider({ children }) {
   const { coupon_map } = useSiteSettings();
+  const { products, load_products } = useProductsCatalog();
   const [cart_items, set_cart_items] = useState([]);
   const [cart_open, set_cart_open] = useState(false);
   const [coupon_code, set_coupon_code] = useState("");
@@ -78,7 +79,7 @@ export function CartProvider({ children }) {
     [cart_subtotal, cart_discount]
   );
 
-  const add_to_cart = (
+  const add_to_cart = useCallback((
     product,
     fragrance = "",
     customization = null,
@@ -94,6 +95,7 @@ export function CartProvider({ children }) {
       const existing = prev.find((item) =>
         matches_cart_line(item, product.id, fragrance, customization, bulk_pack)
       );
+
       if (existing) {
         if (existing.sold_out) {
           return prev;
@@ -104,6 +106,7 @@ export function CartProvider({ children }) {
             : item
         );
       }
+
       return [
         ...prev,
         {
@@ -124,9 +127,9 @@ export function CartProvider({ children }) {
     });
 
     return true;
-  };
+  }, []);
 
-  const remove_from_cart = (
+  const remove_from_cart = useCallback((
     product_id,
     fragrance = "",
     customization = null,
@@ -137,9 +140,9 @@ export function CartProvider({ children }) {
         (item) => !matches_cart_line(item, product_id, fragrance, customization, bulk_pack)
       )
     );
-  };
+  }, []);
 
-  const update_quantity = (
+  const update_quantity = useCallback((
     product_id,
     quantity,
     fragrance = "",
@@ -147,28 +150,32 @@ export function CartProvider({ children }) {
     bulk_pack = null
   ) => {
     if (quantity < 1) {
-      remove_from_cart(product_id, fragrance, customization, bulk_pack);
+      set_cart_items((prev) =>
+        prev.filter(
+          (item) => !matches_cart_line(item, product_id, fragrance, customization, bulk_pack)
+        )
+      );
       return;
     }
 
-    const current_item = cart_items.find((item) =>
-      matches_cart_line(item, product_id, fragrance, customization, bulk_pack)
-    );
+    set_cart_items((prev) => {
+      const current_item = prev.find((item) =>
+        matches_cart_line(item, product_id, fragrance, customization, bulk_pack)
+      );
 
-    if (current_item?.sold_out && quantity > current_item.quantity) {
-      return;
-    }
+      if (current_item?.sold_out && quantity > current_item.quantity) {
+        return prev;
+      }
 
-    set_cart_items((prev) =>
-      prev.map((item) =>
+      return prev.map((item) =>
         matches_cart_line(item, product_id, fragrance, customization, bulk_pack)
           ? { ...item, quantity }
           : item
-      )
-    );
-  };
+      );
+    });
+  }, []);
 
-  const apply_coupon = (code) => {
+  const apply_coupon = useCallback((code) => {
     const normalized = code.trim().toUpperCase();
     const percent = get_coupon_percent(normalized, coupon_map);
 
@@ -180,24 +187,26 @@ export function CartProvider({ children }) {
     set_coupon_code(normalized);
     set_coupon_error("");
     return true;
-  };
+  }, [coupon_map]);
 
-  const remove_coupon = () => {
+  const remove_coupon = useCallback(() => {
     set_coupon_code("");
     set_coupon_error("");
-  };
+  }, []);
 
-  const clear_cart = () => {
+  const clear_cart = useCallback(() => {
     set_cart_items([]);
     set_is_gift(false);
     set_gift_note("");
-  };
+  }, []);
 
   const sync_cart_availability = useCallback(async () => {
     try {
-      const products = await fetch_products();
+      const catalog_products = products.length > 0 ? products : await load_products();
       const sold_out_ids = new Set(
-        products.filter((product) => is_product_sold_out(product)).map((product) => product.id)
+        catalog_products
+          .filter((product) => is_product_sold_out(product))
+          .map((product) => product.id)
       );
 
       set_cart_items((prev) => {
@@ -213,42 +222,63 @@ export function CartProvider({ children }) {
     } catch {
       // ignore sync errors
     }
-  }, []);
+  }, [products, load_products]);
 
-  const open_cart = () => set_cart_open(true);
-  const close_cart = () => set_cart_open(false);
+  const open_cart = useCallback(() => set_cart_open(true), []);
+  const close_cart = useCallback(() => set_cart_open(false), []);
 
-  return (
-    <CartContext.Provider
-      value={{
-        cart_items,
-        cart_count,
-        cart_subtotal,
-        cart_discount,
-        cart_total,
-        coupon_code,
-        coupon_percent,
-        coupon_error,
-        cart_open,
-        is_gift,
-        gift_note,
-        has_sold_out_items,
-        set_is_gift,
-        set_gift_note,
-        add_to_cart,
-        remove_from_cart,
-        update_quantity,
-        apply_coupon,
-        remove_coupon,
-        clear_cart,
-        sync_cart_availability,
-        open_cart,
-        close_cart,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
+  const value = useMemo(
+    () => ({
+      cart_items,
+      cart_count,
+      cart_subtotal,
+      cart_discount,
+      cart_total,
+      coupon_code,
+      coupon_percent,
+      coupon_error,
+      cart_open,
+      is_gift,
+      gift_note,
+      has_sold_out_items,
+      set_is_gift,
+      set_gift_note,
+      add_to_cart,
+      remove_from_cart,
+      update_quantity,
+      apply_coupon,
+      remove_coupon,
+      clear_cart,
+      sync_cart_availability,
+      open_cart,
+      close_cart,
+    }),
+    [
+      cart_items,
+      cart_count,
+      cart_subtotal,
+      cart_discount,
+      cart_total,
+      coupon_code,
+      coupon_percent,
+      coupon_error,
+      cart_open,
+      is_gift,
+      gift_note,
+      has_sold_out_items,
+      add_to_cart,
+      remove_from_cart,
+      update_quantity,
+      apply_coupon,
+      remove_coupon,
+      clear_cart,
+      sync_cart_availability,
+      open_cart,
+      close_cart,
+    ]
   );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
 export function useCart() {

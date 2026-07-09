@@ -1,37 +1,14 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetch_products } from "../../api/products";
+import { useProductsCatalog } from "../../context/ProductsCatalogContext";
 import AdminDeleteProductButton from "../../components/admin/AdminDeleteProductButton";
 import AdminLayout from "../../components/admin/AdminLayout";
 import "./Admin.css";
 
 function AdminProductsList() {
-  const [products, set_products] = useState([]);
-  const [loading, set_loading] = useState(true);
+  const { products, loading, refresh_products } = useProductsCatalog();
 
-  useEffect(() => {
-    let active = true;
-
-    fetch_products()
-      .then((data) => {
-        if (active) {
-          set_products(data);
-          set_loading(false);
-        }
-      })
-      .catch(() => {
-        if (active) {
-          set_loading(false);
-        }
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const handle_deleted = (product_id) => {
-    set_products((prev) => prev.filter((product) => product.id !== product_id));
+  const handle_deleted = async (product_id) => {
+    await refresh_products();
   };
 
   return (

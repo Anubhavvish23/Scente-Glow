@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetch_products } from "../../api/products";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
+import { useProductsCatalog } from "../../context/ProductsCatalogContext";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminFragranceSection from "../../components/admin/AdminFragranceSection";
 import AdminStatsSection from "../../components/admin/AdminStatsSection";
@@ -21,8 +21,8 @@ function Admin() {
   const [saving, set_saving] = useState(false);
   const [saved, set_saved] = useState(false);
   const [error, set_error] = useState("");
-  const [products, set_products] = useState([]);
-  const [products_loading, set_products_loading] = useState(true);
+  const { products, loading: products_loading } = useProductsCatalog();
+  const preview_products = useMemo(() => products.slice(0, preview_limit), [products]);
 
   useEffect(() => {
     set_enabled(sale_banner_settings.enabled);
@@ -33,27 +33,6 @@ function Admin() {
         : String(sale_banner_settings.percent)
     );
   }, [sale_banner_settings]);
-
-  useEffect(() => {
-    let active = true;
-
-    fetch_products()
-      .then((data) => {
-        if (active) {
-          set_products(data.slice(0, preview_limit));
-          set_products_loading(false);
-        }
-      })
-      .catch(() => {
-        if (active) {
-          set_products_loading(false);
-        }
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
 
   const handle_save = async (event) => {
     event.preventDefault();
@@ -132,11 +111,11 @@ function Admin() {
 
         {products_loading ? (
           <p className="sg-admin__muted">Loading products...</p>
-        ) : products.length === 0 ? (
+        ) : preview_products.length === 0 ? (
           <p className="sg-admin__muted">No products found.</p>
         ) : (
           <ul className="sg-admin__product-names">
-            {products.map((product) => (
+            {preview_products.map((product) => (
               <li key={product.id}>
                 <Link
                   to={`/admin/products/${product.id}/edit`}

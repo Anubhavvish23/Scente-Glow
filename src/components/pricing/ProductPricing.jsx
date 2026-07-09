@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { format_price, get_discount_percent } from "../../utils/pricing";
 import "./ProductPricing.css";
 
@@ -18,4 +19,4 @@ function ProductPricing({ price, original_price, compact = false }) {
   );
 }
 
-export default ProductPricing;
+export default memo(ProductPricing);
