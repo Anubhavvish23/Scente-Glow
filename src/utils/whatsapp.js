@@ -9,6 +9,7 @@ import {
   get_line_price,
   has_bulk_packs,
 } from "./bulk_packs";
+import { has_product_fragrances } from "./fragrances";
 
 const whatsapp_number = "917406903913";
 
@@ -79,7 +80,11 @@ export function get_whatsapp_product_url(
   bulk_pack = null,
   options = {}
 ) {
-  if (!fragrance || product?.sold_out) {
+  if (product?.sold_out) {
+    return null;
+  }
+
+  if (has_product_fragrances(product) && !fragrance) {
     return null;
   }
 
@@ -109,7 +114,7 @@ export function get_whatsapp_product_url(
     "I would like to order:",
     "",
     product.name,
-    `Fragrance: ${fragrance}`,
+    ...(fragrance ? [`Fragrance: ${fragrance}`] : []),
     ...(bulk_pack_summary ? [bulk_pack_summary] : []),
     ...customization_lines,
     `Qty: 1 - ${format_price(price)}`,

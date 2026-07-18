@@ -8,6 +8,10 @@ export const default_fragrances = [
 
 export const dummy_fragrances = default_fragrances;
 
+export function has_product_fragrances(product) {
+  return product?.fragrances_enabled === true;
+}
+
 export function normalize_fragrances(items) {
   if (!Array.isArray(items)) {
     return [];

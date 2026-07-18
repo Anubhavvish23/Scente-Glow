@@ -14,6 +14,7 @@ import {
   is_letter_customizable,
   customization_matches,
 } from "../../utils/customization";
+import { has_product_fragrances } from "../../utils/fragrances";
 import { is_product_sold_out } from "../../utils/product";
 import ProductCustomizeModal from "./ProductCustomizeModal";
 import "./ProductCartControl.css";
@@ -41,6 +42,7 @@ function ProductCartControl({
 
   const needs_customization = is_letter_customizable(product);
   const needs_bulk_pack = has_bulk_packs(product);
+  const needs_fragrance = has_product_fragrances(product);
   const sold_out = is_product_sold_out(product);
 
   const cart_item = useMemo(
@@ -83,11 +85,12 @@ function ProductCartControl({
   const can_add = useMemo(
     () =>
       !sold_out &&
-      Boolean(selected_fragrance) &&
+      (!needs_fragrance || Boolean(selected_fragrance)) &&
       (!needs_customization || is_customization_complete(customization, product)) &&
       (!needs_bulk_pack || Boolean(selected_bulk_pack)),
     [
       sold_out,
+      needs_fragrance,
       selected_fragrance,
       needs_customization,
       customization,
@@ -101,7 +104,7 @@ function ProductCartControl({
     if (sold_out) {
       return "Sold out";
     }
-    if (!selected_fragrance) {
+    if (needs_fragrance && !selected_fragrance) {
       return "Select a fragrance";
     }
     if (needs_bulk_pack && !selected_bulk_pack) {
@@ -113,6 +116,7 @@ function ProductCartControl({
     return "Add to cart";
   }, [
     sold_out,
+    needs_fragrance,
     selected_fragrance,
     needs_bulk_pack,
     selected_bulk_pack,

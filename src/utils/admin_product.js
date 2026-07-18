@@ -21,6 +21,7 @@ export const empty_admin_product_form = {
   colours_enabled: false,
   custom_colours: [],
   letters_enabled: false,
+  fragrances_enabled: false,
 };
 
 export function product_to_admin_form(product) {
@@ -62,5 +63,6 @@ export function product_to_admin_form(product) {
     colours_enabled: custom_colours.length > 0,
     custom_colours,
     letters_enabled: Boolean(product.letters_enabled),
+    fragrances_enabled: Boolean(product.fragrances_enabled),
   };
 }

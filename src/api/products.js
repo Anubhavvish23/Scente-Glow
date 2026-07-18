@@ -457,6 +457,8 @@ function build_product_payload(product_input) {
 
   if (product_input.packages_visible) {
     payload.bulk_packs = admin_rows_to_bulk_packs(product_input.pack_rows);
+  } else {
+    payload.bulk_packs = [];
   }
 
   if (product_input.colours_enabled) {
@@ -466,6 +468,7 @@ function build_product_payload(product_input) {
   }
 
   payload.letters_enabled = Boolean(product_input.letters_enabled);
+  payload.fragrances_enabled = Boolean(product_input.fragrances_enabled);
 
   return payload;
 }

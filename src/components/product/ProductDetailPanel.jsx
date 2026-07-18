@@ -4,6 +4,7 @@ import BulkPackSelector from "./BulkPackSelector";
 import FragranceSelector from "./FragranceSelector";
 import ProductCartControl from "./ProductCartControl";
 import { has_bulk_packs } from "../../utils/bulk_packs";
+import { has_product_fragrances } from "../../utils/fragrances";
 import {
   default_product_description,
   get_product_details,
@@ -137,11 +138,13 @@ function ProductDetailPanel({
         </div>
       )}
 
-      <FragranceSelector
-        value={selected_fragrance}
-        on_change={on_fragrance_change}
-        className={variant === "sheet" ? "sg-fragrance-selector--sheet" : ""}
-      />
+      {has_product_fragrances(product) && (
+        <FragranceSelector
+          value={selected_fragrance}
+          on_change={on_fragrance_change}
+          className={variant === "sheet" ? "sg-fragrance-selector--sheet" : ""}
+        />
+      )}
 
       <ProductCartControl
         product={product}
