@@ -17,6 +17,7 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
   const [error, set_error] = useState("");
   const [new_colour_name, set_new_colour_name] = useState("");
   const [new_colour_hex, set_new_colour_hex] = useState("#f4a6c1");
+  const [new_fragrance, set_new_fragrance] = useState("");
 
   useEffect(() => {
     if (!is_edit || !product_id) {
@@ -151,6 +152,40 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
     set_saved(false);
   };
 
+  const add_fragrance = () => {
+    const name = new_fragrance.trim();
+
+    if (!name) {
+      set_error("Enter a fragrance name.");
+      return;
+    }
+
+    const exists = form.custom_fragrances.some(
+      (item) => item.toLowerCase() === name.toLowerCase()
+    );
+
+    if (exists) {
+      set_error("This fragrance already exists for this product.");
+      return;
+    }
+
+    set_form((prev) => ({
+      ...prev,
+      custom_fragrances: [...prev.custom_fragrances, name],
+    }));
+    set_new_fragrance("");
+    set_saved(false);
+    set_error("");
+  };
+
+  const remove_fragrance = (name) => {
+    set_form((prev) => ({
+      ...prev,
+      custom_fragrances: prev.custom_fragrances.filter((item) => item !== name),
+    }));
+    set_saved(false);
+  };
+
   const handle_submit = async (event) => {
     event.preventDefault();
     set_saving(true);
@@ -159,6 +194,12 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
 
     if (form.colours_enabled && form.custom_colours.length === 0) {
       set_error("Add at least one colour or turn off colour options.");
+      set_saving(false);
+      return;
+    }
+
+    if (form.fragrances_enabled && form.custom_fragrances.length === 0) {
+      set_error("Add at least one fragrance or turn off fragrance options.");
       set_saving(false);
       return;
     }
@@ -438,6 +479,48 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
                     className="sg-admin__colour-remove"
                     onClick={() => remove_colour(colour.name)}
                     aria-label={`Remove ${colour.name}`}
+                  >
+                    ×
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      {is_edit && form.fragrances_enabled && (
+        <div className="sg-admin__field sg-admin__product-fragrance-section">
+          <div className="sg-admin__fragrance-row">
+            <input
+              type="text"
+              className="sg-admin__input"
+              value={new_fragrance}
+              onChange={(event) => set_new_fragrance(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  add_fragrance();
+                }
+              }}
+              placeholder="Rose Oud"
+              aria-label="Fragrance name"
+            />
+            <button type="button" className="sg-admin__save" onClick={add_fragrance}>
+              Add
+            </button>
+          </div>
+
+          {form.custom_fragrances.length > 0 && (
+            <ul className="sg-admin__fragrance-list">
+              {form.custom_fragrances.map((fragrance) => (
+                <li key={fragrance} className="sg-admin__fragrance-item">
+                  <span>{fragrance}</span>
+                  <button
+                    type="button"
+                    className="sg-admin__fragrance-remove"
+                    onClick={() => remove_fragrance(fragrance)}
+                    aria-label={`Remove ${fragrance}`}
                   >
                     ×
                   </button>

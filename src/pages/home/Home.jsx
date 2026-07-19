@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import Footer from "../../components/footer/Footer";
 import WhyChooseUs from "../../components/home/WhyChooseUs";
 import "./Home.css";
 
@@ -28,8 +27,6 @@ function Home() {
       </section>
 
       <WhyChooseUs />
-
-      <Footer />
     </div>
   );
 }

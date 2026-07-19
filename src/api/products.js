@@ -4,6 +4,7 @@ import { normalize_image_links } from "../utils/google_drive";
 import { sort_products_for_display } from "../utils/product_sort";
 import { admin_rows_to_bulk_packs } from "../utils/admin_bulk_packs";
 import { normalize_colours } from "../utils/colours";
+import { normalize_fragrances } from "../utils/fragrances";
 
 const retired_product_ids = new Set(["noir-vetiver", "rose-amber", "cedar-moss"]);
 
@@ -468,7 +469,14 @@ function build_product_payload(product_input) {
   }
 
   payload.letters_enabled = Boolean(product_input.letters_enabled);
-  payload.fragrances_enabled = Boolean(product_input.fragrances_enabled);
+
+  if (product_input.fragrances_enabled) {
+    payload.custom_fragrances = normalize_fragrances(product_input.custom_fragrances);
+    payload.fragrances_enabled = payload.custom_fragrances.length > 0;
+  } else {
+    payload.custom_fragrances = [];
+    payload.fragrances_enabled = false;
+  }
 
   return payload;
 }

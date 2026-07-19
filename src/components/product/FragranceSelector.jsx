@@ -1,10 +1,12 @@
-import { useSiteSettings } from "../../context/SiteSettingsContext";
-import { default_fragrances } from "../../utils/fragrances";
+import { get_product_fragrances } from "../../utils/fragrances";
 import "./FragranceSelector.css";
 
-function FragranceSelector({ value, on_change, className = "" }) {
-  const { fragrances } = useSiteSettings();
-  const options = fragrances.length > 0 ? fragrances : default_fragrances;
+function FragranceSelector({ product, value, on_change, className = "" }) {
+  const options = get_product_fragrances(product);
+
+  if (options.length === 0) {
+    return null;
+  }
 
   return (
     <div className={`sg-fragrance-selector ${className}`.trim()}>

@@ -394,6 +394,14 @@
   padding: 10px 0 4px;
 }
 
+.sg-admin__product-fragrance-section {
+  padding: 10px 0 4px;
+}
+
+.sg-admin__product-fragrance-section .sg-admin__fragrance-list {
+  margin-top: 12px;
+}
+
 .sg-admin__toggle-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -1,5 +1,6 @@
 import { bulk_packs_to_admin_rows, empty_pack_rows } from "./admin_bulk_packs";
 import { normalize_colours } from "./colours";
+import { normalize_fragrances } from "./fragrances";
 
 export const empty_admin_product_form = {
   name: "",
@@ -22,6 +23,7 @@ export const empty_admin_product_form = {
   custom_colours: [],
   letters_enabled: false,
   fragrances_enabled: false,
+  custom_fragrances: [],
 };
 
 export function product_to_admin_form(product) {
@@ -42,6 +44,7 @@ export function product_to_admin_form(product) {
   const pack_rows = bulk_packs_to_admin_rows(product.bulk_packs);
   const packages_visible = pack_rows.some((row) => row.size || row.price || row.discount_percent);
   const custom_colours = normalize_colours(product.custom_colours);
+  const custom_fragrances = normalize_fragrances(product.custom_fragrances);
 
   return {
     name: product.name || "",
@@ -63,6 +66,7 @@ export function product_to_admin_form(product) {
     colours_enabled: custom_colours.length > 0,
     custom_colours,
     letters_enabled: Boolean(product.letters_enabled),
-    fragrances_enabled: Boolean(product.fragrances_enabled),
+    fragrances_enabled: custom_fragrances.length > 0 || Boolean(product.fragrances_enabled),
+    custom_fragrances,
   };
 }

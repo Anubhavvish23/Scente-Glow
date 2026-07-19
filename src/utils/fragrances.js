@@ -8,8 +8,12 @@ export const default_fragrances = [
 
 export const dummy_fragrances = default_fragrances;
 
+export function get_product_fragrances(product) {
+  return normalize_fragrances(product?.custom_fragrances);
+}
+
 export function has_product_fragrances(product) {
-  return product?.fragrances_enabled === true;
+  return get_product_fragrances(product).length > 0;
 }
 
 export function normalize_fragrances(items) {

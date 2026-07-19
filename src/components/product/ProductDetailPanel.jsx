@@ -140,6 +140,7 @@ function ProductDetailPanel({
 
       {has_product_fragrances(product) && (
         <FragranceSelector
+          product={product}
           value={selected_fragrance}
           on_change={on_fragrance_change}
           className={variant === "sheet" ? "sg-fragrance-selector--sheet" : ""}
