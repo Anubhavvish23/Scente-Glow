@@ -7,6 +7,7 @@ import Contact from "./pages/contact";
 import AdminRoute from "./components/admin/AdminRoute";
 import Admin from "./pages/admin/Admin";
 import AdminProductsList from "./pages/admin/AdminProductsList";
+import AdminProductCreate from "./pages/admin/AdminProductCreate";
 import AdminProductEdit from "./pages/admin/AdminProductEdit";
 
 function AppRoutes() {
@@ -21,6 +22,7 @@ function AppRoutes() {
       <Route path="/admin" element={<AdminRoute />}>
         <Route index element={<Admin />} />
         <Route path="products" element={<AdminProductsList />} />
+        <Route path="products/new" element={<AdminProductCreate />} />
         <Route path="products/:id/edit" element={<AdminProductEdit />} />
       </Route>
     </Routes>

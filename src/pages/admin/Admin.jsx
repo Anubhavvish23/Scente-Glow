@@ -129,6 +129,9 @@ function Admin() {
         )}
 
         <div className="sg-admin__preview-actions">
+          <Link to="/admin/products/new" className="sg-admin__view-all-btn">
+            Add product
+          </Link>
           <Link to="/admin/products" className="sg-admin__view-all-btn">
             View all
           </Link>

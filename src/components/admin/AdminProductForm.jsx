@@ -7,7 +7,7 @@ import { product_category_options } from "../../utils/product_categories";
 
 const empty_image_row = "";
 
-function AdminProductForm({ mode = "create", product_id = "", on_product_loaded }) {
+function AdminProductForm({ mode = "create", product_id = "", on_product_loaded, on_created }) {
   const is_edit = mode === "edit";
   const { refresh_products } = useProductsCatalog();
   const [form, set_form] = useState(empty_admin_product_form);
@@ -208,7 +208,13 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
       if (is_edit) {
         await update_product(product_id, form);
       } else {
-        await create_product(form);
+        const created = await create_product(form);
+        await refresh_products();
+        set_saved(true);
+        if (typeof on_created === "function") {
+          on_created(created?.id || "");
+          return;
+        }
         set_form(empty_admin_product_form);
       }
       await refresh_products();
@@ -238,8 +244,6 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded 
 
   return (
     <form className="sg-admin__panel sg-admin__product" onSubmit={handle_submit}>
-      {!is_edit && <h2 className="sg-admin__panel-title">Add Product</h2>}
-
       <div className="sg-admin__field">
         <label className="sg-admin__label" htmlFor="admin-product-title">
           Title

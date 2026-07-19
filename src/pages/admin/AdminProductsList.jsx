@@ -14,11 +14,16 @@ function AdminProductsList() {
   return (
     <AdminLayout>
       <section className="sg-admin__panel sg-admin__products-list">
-        <div className="sg-admin__panel-head-row">
+        <div className="sg-admin__panel-head-row sg-admin__panel-head-row--spaced">
           <h2 className="sg-admin__panel-title">All products</h2>
-          <Link to="/admin" className="sg-admin__back-link">
-            ← Back
-          </Link>
+          <div className="sg-admin__panel-head-actions">
+            <Link to="/admin/products/new" className="sg-admin__view-all-btn">
+              Add product
+            </Link>
+            <Link to="/admin" className="sg-admin__back-link">
+              ← Back
+            </Link>
+          </div>
         </div>
 
         {loading ? (
