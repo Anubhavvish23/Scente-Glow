@@ -70,6 +70,34 @@
   color: #fffaf1;
 }
 
+.sg-admin__add-product-btn {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid var(--sg-ink);
+  border-radius: 6px;
+  background: var(--sg-ink);
+  color: #fffaf1;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.sg-admin__add-product-btn:hover {
+  background: transparent;
+  color: var(--sg-ink);
+}
+
+.sg-admin__empty-products {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
 .sg-admin__panel-head-row {
   display: flex;
   align-items: center;
@@ -409,6 +437,47 @@
   gap: 14px 16px;
   padding: 14px 0 4px;
   border-top: 1px solid rgba(43, 38, 32, 0.1);
+}
+
+.sg-admin__toggle-grid--status {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sg-admin__option-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.sg-admin__option-bar {
+  padding: 12px 14px;
+  border: 1px solid rgba(43, 38, 32, 0.12);
+  border-radius: 10px;
+  background: rgba(251, 246, 239, 0.55);
+}
+
+.sg-admin__option-bar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.sg-admin__option-bar-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sg-ink);
+}
+
+.sg-admin__option-bar .sg-admin__colour-section,
+.sg-admin__option-bar .sg-admin__product-fragrance-section,
+.sg-admin__option-bar .sg-admin__package-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(43, 38, 32, 0.08);
 }
 
 .sg-admin__field--toggle-inline {

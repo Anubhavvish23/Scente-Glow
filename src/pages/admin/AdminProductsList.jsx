@@ -17,8 +17,8 @@ function AdminProductsList() {
         <div className="sg-admin__panel-head-row sg-admin__panel-head-row--spaced">
           <h2 className="sg-admin__panel-title">All products</h2>
           <div className="sg-admin__panel-head-actions">
-            <Link to="/admin/products/new" className="sg-admin__view-all-btn">
-              Add product
+            <Link to="/admin/products/new" className="sg-admin__add-product-btn">
+              + Add product
             </Link>
             <Link to="/admin" className="sg-admin__back-link">
               ← Back
@@ -29,7 +29,12 @@ function AdminProductsList() {
         {loading ? (
           <p className="sg-admin__muted">Loading products...</p>
         ) : products.length === 0 ? (
-          <p className="sg-admin__muted">No products found.</p>
+          <div className="sg-admin__empty-products">
+            <p className="sg-admin__muted">No products found.</p>
+            <Link to="/admin/products/new" className="sg-admin__add-product-btn">
+              + Add product
+            </Link>
+          </div>
         ) : (
           <ul className="sg-admin__product-names">
             {products.map((product) => (

@@ -19,6 +19,9 @@ function AdminLayout({ children }) {
           </Link>
         </div>
         <div className="sg-admin__header-end">
+          <Link to="/admin/products/new" className="sg-admin__add-product-btn">
+            + Add product
+          </Link>
           <Link to="/admin/products" className="sg-admin__view-products">
             View all products
           </Link>

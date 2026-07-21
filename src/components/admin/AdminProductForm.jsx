@@ -365,7 +365,7 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
         </div>
       </div>
 
-      <div className="sg-admin__toggle-grid">
+      <div className="sg-admin__toggle-grid sg-admin__toggle-grid--status">
         <div className="sg-admin__field sg-admin__field--toggle">
           <span className="sg-admin__label">Featured product</span>
           <label className="sg-admin__banner-toggle" title="Show on top of shop">
@@ -388,9 +388,12 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
             <span className="sg-admin__banner-toggle-track" aria-hidden="true" />
           </label>
         </div>
-        {is_edit && (
-          <div className="sg-admin__field sg-admin__field--toggle">
-            <span className="sg-admin__label">Colour options</span>
+      </div>
+
+      <div className="sg-admin__option-bars">
+        <div className="sg-admin__option-bar">
+          <div className="sg-admin__option-bar-head">
+            <span className="sg-admin__option-bar-label">Colour options</span>
             <label className="sg-admin__banner-toggle" title="Let customers pick a wax colour">
               <input
                 type="checkbox"
@@ -400,10 +403,58 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
               <span className="sg-admin__banner-toggle-track" aria-hidden="true" />
             </label>
           </div>
-        )}
-        {is_edit && (
-          <div className="sg-admin__field sg-admin__field--toggle">
-            <span className="sg-admin__label">Letter options</span>
+          {form.colours_enabled && (
+            <div className="sg-admin__field sg-admin__colour-section">
+              <div className="sg-admin__colour-row">
+                <input
+                  type="color"
+                  className="sg-admin__colour-picker"
+                  value={new_colour_hex}
+                  onChange={(event) => set_new_colour_hex(event.target.value)}
+                  aria-label="Colour swatch"
+                />
+                <input
+                  type="text"
+                  className="sg-admin__input"
+                  value={new_colour_name}
+                  onChange={(event) => set_new_colour_name(event.target.value)}
+                  placeholder="Blush Petal"
+                  aria-label="Colour name"
+                />
+                <button type="button" className="sg-admin__save" onClick={add_colour}>
+                  Add
+                </button>
+              </div>
+
+              {form.custom_colours.length > 0 && (
+                <ul className="sg-admin__colour-list">
+                  {form.custom_colours.map((colour) => (
+                    <li key={colour.name} className="sg-admin__colour-item">
+                      <span
+                        className="sg-admin__colour-swatch"
+                        style={{ backgroundColor: colour.hex }}
+                        aria-hidden="true"
+                      />
+                      <span>{colour.name}</span>
+                      <button
+                        type="button"
+                        className="sg-admin__colour-remove"
+                        onClick={() => remove_colour(colour.name)}
+                        aria-label={`Remove ${colour.name}`}
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="sg-admin__option-bar">
+          <div className="sg-admin__option-bar-head">
+            <span className="sg-admin__option-bar-label">Letter options</span>
             <label className="sg-admin__banner-toggle" title="Let customers pick a letter">
               <input
                 type="checkbox"
@@ -413,14 +464,12 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
               <span className="sg-admin__banner-toggle-track" aria-hidden="true" />
             </label>
           </div>
-        )}
-        {is_edit && (
-          <div className="sg-admin__field sg-admin__field--toggle">
-            <span className="sg-admin__label">Fragrance options</span>
-            <label
-              className="sg-admin__banner-toggle"
-              title="Let customers pick a fragrance"
-            >
+        </div>
+
+        <div className="sg-admin__option-bar">
+          <div className="sg-admin__option-bar-head">
+            <span className="sg-admin__option-bar-label">Fragrance options</span>
+            <label className="sg-admin__banner-toggle" title="Let customers pick a fragrance">
               <input
                 type="checkbox"
                 checked={form.fragrances_enabled}
@@ -429,10 +478,52 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
               <span className="sg-admin__banner-toggle-track" aria-hidden="true" />
             </label>
           </div>
-        )}
-        {is_edit && (
-          <div className="sg-admin__field sg-admin__field--toggle">
-            <span className="sg-admin__label">Package options</span>
+          {form.fragrances_enabled && (
+            <div className="sg-admin__field sg-admin__product-fragrance-section">
+              <div className="sg-admin__fragrance-row">
+                <input
+                  type="text"
+                  className="sg-admin__input"
+                  value={new_fragrance}
+                  onChange={(event) => set_new_fragrance(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      add_fragrance();
+                    }
+                  }}
+                  placeholder="Rose Oud"
+                  aria-label="Fragrance name"
+                />
+                <button type="button" className="sg-admin__save" onClick={add_fragrance}>
+                  Add
+                </button>
+              </div>
+
+              {form.custom_fragrances.length > 0 && (
+                <ul className="sg-admin__fragrance-list">
+                  {form.custom_fragrances.map((fragrance) => (
+                    <li key={fragrance} className="sg-admin__fragrance-item">
+                      <span>{fragrance}</span>
+                      <button
+                        type="button"
+                        className="sg-admin__fragrance-remove"
+                        onClick={() => remove_fragrance(fragrance)}
+                        aria-label={`Remove ${fragrance}`}
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="sg-admin__option-bar">
+          <div className="sg-admin__option-bar-head">
+            <span className="sg-admin__option-bar-label">Package options</span>
             <label className="sg-admin__banner-toggle" title="Add bulk package prices">
               <input
                 type="checkbox"
@@ -442,145 +533,53 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
               <span className="sg-admin__banner-toggle-track" aria-hidden="true" />
             </label>
           </div>
-        )}
+          {form.packages_visible && (
+            <div className="sg-admin__field sg-admin__package-section">
+              <ul className="sg-admin__package-lines">
+                {form.pack_rows.map((row, index) => (
+                  <li key={`pack-line-${index}`}>
+                    <p className="sg-admin__banner-text sg-admin__banner-text--package">
+                      pack of{" "}
+                      <input
+                        type="number"
+                        min="1"
+                        className="sg-admin__banner-input sg-admin__banner-input--pack-size"
+                        value={row.size}
+                        onChange={(event) => update_pack_row(index, "size", event.target.value)}
+                        placeholder="10"
+                        aria-label={`Package ${index + 1} size`}
+                      />{" "}
+                      at{" "}
+                      <input
+                        type="number"
+                        min="0"
+                        className="sg-admin__banner-input sg-admin__banner-input--pack-price"
+                        value={row.price}
+                        onChange={(event) => update_pack_row(index, "price", event.target.value)}
+                        placeholder="320"
+                        aria-label={`Package ${index + 1} price`}
+                      />{" "}
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        className="sg-admin__banner-input sg-admin__banner-input--pack-discount"
+                        value={row.discount_percent}
+                        onChange={(event) =>
+                          update_pack_row(index, "discount_percent", event.target.value)
+                        }
+                        placeholder="10"
+                        aria-label={`Package ${index + 1} discount`}
+                      />
+                      % off
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
-
-      {is_edit && form.colours_enabled && (
-        <div className="sg-admin__field sg-admin__colour-section">
-          <div className="sg-admin__colour-row">
-            <input
-              type="color"
-              className="sg-admin__colour-picker"
-              value={new_colour_hex}
-              onChange={(event) => set_new_colour_hex(event.target.value)}
-              aria-label="Colour swatch"
-            />
-            <input
-              type="text"
-              className="sg-admin__input"
-              value={new_colour_name}
-              onChange={(event) => set_new_colour_name(event.target.value)}
-              placeholder="Blush Petal"
-              aria-label="Colour name"
-            />
-            <button type="button" className="sg-admin__save" onClick={add_colour}>
-              Add
-            </button>
-          </div>
-
-          {form.custom_colours.length > 0 && (
-            <ul className="sg-admin__colour-list">
-              {form.custom_colours.map((colour) => (
-                <li key={colour.name} className="sg-admin__colour-item">
-                  <span
-                    className="sg-admin__colour-swatch"
-                    style={{ backgroundColor: colour.hex }}
-                    aria-hidden="true"
-                  />
-                  <span>{colour.name}</span>
-                  <button
-                    type="button"
-                    className="sg-admin__colour-remove"
-                    onClick={() => remove_colour(colour.name)}
-                    aria-label={`Remove ${colour.name}`}
-                  >
-                    ×
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-
-      {is_edit && form.fragrances_enabled && (
-        <div className="sg-admin__field sg-admin__product-fragrance-section">
-          <div className="sg-admin__fragrance-row">
-            <input
-              type="text"
-              className="sg-admin__input"
-              value={new_fragrance}
-              onChange={(event) => set_new_fragrance(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-                  add_fragrance();
-                }
-              }}
-              placeholder="Rose Oud"
-              aria-label="Fragrance name"
-            />
-            <button type="button" className="sg-admin__save" onClick={add_fragrance}>
-              Add
-            </button>
-          </div>
-
-          {form.custom_fragrances.length > 0 && (
-            <ul className="sg-admin__fragrance-list">
-              {form.custom_fragrances.map((fragrance) => (
-                <li key={fragrance} className="sg-admin__fragrance-item">
-                  <span>{fragrance}</span>
-                  <button
-                    type="button"
-                    className="sg-admin__fragrance-remove"
-                    onClick={() => remove_fragrance(fragrance)}
-                    aria-label={`Remove ${fragrance}`}
-                  >
-                    ×
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-
-      {is_edit && form.packages_visible && (
-        <div className="sg-admin__field sg-admin__package-section">
-          <span className="sg-admin__label">Packages</span>
-          <ul className="sg-admin__package-lines">
-            {form.pack_rows.map((row, index) => (
-              <li key={`pack-line-${index}`}>
-                <p className="sg-admin__banner-text sg-admin__banner-text--package">
-                  pack of{" "}
-                  <input
-                    type="number"
-                    min="1"
-                    className="sg-admin__banner-input sg-admin__banner-input--pack-size"
-                    value={row.size}
-                    onChange={(event) => update_pack_row(index, "size", event.target.value)}
-                    placeholder="10"
-                    aria-label={`Package ${index + 1} size`}
-                  />{" "}
-                  at{" "}
-                  <input
-                    type="number"
-                    min="0"
-                    className="sg-admin__banner-input sg-admin__banner-input--pack-price"
-                    value={row.price}
-                    onChange={(event) => update_pack_row(index, "price", event.target.value)}
-                    placeholder="320"
-                    aria-label={`Package ${index + 1} price`}
-                  />{" "}
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    className="sg-admin__banner-input sg-admin__banner-input--pack-discount"
-                    value={row.discount_percent}
-                    onChange={(event) =>
-                      update_pack_row(index, "discount_percent", event.target.value)
-                    }
-                    placeholder="10"
-                    aria-label={`Package ${index + 1} discount`}
-                  />
-                  % off
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       <div className="sg-admin__field">
         <label className="sg-admin__label" htmlFor="admin-product-details-heading">
