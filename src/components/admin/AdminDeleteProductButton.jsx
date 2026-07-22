@@ -23,8 +23,8 @@ function AdminDeleteProductButton({ product_id, product_name, on_deleted, classN
     try {
       await delete_product(product_id);
       on_deleted?.(product_id);
-    } catch {
-      window.alert("Could not delete product. Try again.");
+    } catch (error) {
+      window.alert(error?.message || "Could not delete product. Try again.");
     } finally {
       set_deleting(false);
     }
@@ -35,7 +35,7 @@ function AdminDeleteProductButton({ product_id, product_name, on_deleted, classN
       type="button"
       className={`sg-admin__delete-btn${className ? ` ${className}` : ""}`}
       onClick={handle_delete}
-      disabled={deleting}
+      disabled={deleting || !product_id}
       aria-label={`Delete ${product_name}`}
       title="Delete product"
     >

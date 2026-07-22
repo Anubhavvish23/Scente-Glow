@@ -5,9 +5,10 @@ import AdminLayout from "../../components/admin/AdminLayout";
 import "./Admin.css";
 
 function AdminProductsList() {
-  const { products, loading, refresh_products } = useProductsCatalog();
+  const { products, loading, refresh_products, remove_product_locally } = useProductsCatalog();
 
   const handle_deleted = async (product_id) => {
+    remove_product_locally(product_id);
     await refresh_products();
   };
 

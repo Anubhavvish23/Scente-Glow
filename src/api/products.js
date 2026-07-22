@@ -8,6 +8,22 @@ import { normalize_fragrances } from "../utils/fragrances";
 
 const retired_product_ids = new Set(["noir-vetiver", "rose-amber", "cedar-moss"]);
 
+function format_products_write_error(error, fallback_message) {
+  const code = String(error?.code || "");
+  if (code.includes("permission-denied")) {
+    return "Permission denied. Confirm you are logged in as the admin email and Firestore rules are published.";
+  }
+  return error?.message || fallback_message;
+}
+
+function is_product_active(product) {
+  return product?.active !== false;
+}
+
+function is_usable_product_doc(product) {
+  return Boolean(product?.name?.trim()) && is_product_active(product);
+}
+
 const glow_minis_meta = {
   category: "Glow Minis",
   weight: "120g",
@@ -321,51 +337,71 @@ const fallback_products = [
 
 function filter_catalog(products) {
   return products.filter(
-    (product) => product.active !== false && !retired_product_ids.has(product.id)
+    (product) => is_product_active(product) && !retired_product_ids.has(product.id)
   );
 }
 
-function merge_products(firestore_products) {
+function merge_products(firestore_products, excluded_ids = new Set()) {
   const by_id = new Map(firestore_products.map((product) => [product.id, product]));
 
   for (const fallback of fallback_products) {
-    if (!by_id.has(fallback.id)) {
-      by_id.set(fallback.id, fallback);
+    if (by_id.has(fallback.id)) {
+      continue;
     }
+    if (excluded_ids.has(fallback.id) || retired_product_ids.has(fallback.id)) {
+      continue;
+    }
+    by_id.set(fallback.id, fallback);
   }
 
-  return sort_products_for_display(
-    Array.from(by_id.values()).filter((product) => !retired_product_ids.has(product.id))
-  );
+  return sort_products_for_display(filter_catalog(Array.from(by_id.values())));
 }
 
 export async function fetch_products() {
   try {
     const snapshot = await getDocs(collection(db, "products"));
-    const products = filter_catalog(
-      snapshot.docs.map((item) => ({ id: item.id, ...item.data() }))
+    const all_docs = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
+    const excluded_ids = new Set(
+      all_docs
+        .filter((product) => !is_product_active(product) || retired_product_ids.has(product.id))
+        .map((product) => product.id)
     );
+    const products = filter_catalog(all_docs);
 
-    if (products.length > 0) {
-      return merge_products(products);
+    if (snapshot.empty) {
+      return sort_products_for_display(filter_catalog(fallback_products));
     }
 
-    return sort_products_for_display(filter_catalog(fallback_products));
+    return merge_products(products, excluded_ids);
   } catch {
     return sort_products_for_display(filter_catalog(fallback_products));
   }
 }
 
 export async function fetch_product_by_id(id) {
-  if (retired_product_ids.has(id)) {
+  if (!id || retired_product_ids.has(id)) {
     return null;
   }
 
   try {
-    const doc_ref = doc(db, "products", id);
-    const snapshot = await getDoc(doc_ref);
+    const snapshot = await getDoc(doc(db, "products", id));
     if (snapshot.exists()) {
-      return { id: snapshot.id, ...snapshot.data() };
+      const data = { id: snapshot.id, ...snapshot.data() };
+
+      if (!is_product_active(data)) {
+        return null;
+      }
+
+      if (is_usable_product_doc(data)) {
+        return data;
+      }
+
+      const fallback = fallback_products.find((product) => product.id === id);
+      if (fallback && is_product_active(fallback)) {
+        return { ...fallback, ...data, id };
+      }
+
+      return null;
     }
   } catch {
     // fall through to local products
@@ -454,6 +490,8 @@ function build_product_payload(product_input) {
 
   if (original_price != null && Number.isFinite(original_price) && original_price > price) {
     payload.original_price = original_price;
+  } else {
+    payload.original_price = null;
   }
 
   if (product_input.packages_visible) {
@@ -488,14 +526,22 @@ export async function create_product(product_input) {
     throw new Error("Could not create a product id from this title.");
   }
 
-  const existing = await getDoc(doc(db, "products", product_id));
-  if (existing.exists()) {
-    throw new Error("A product with this title already exists.");
-  }
+  try {
+    const existing = await getDoc(doc(db, "products", product_id));
+    if (existing.exists() && is_product_active(existing.data())) {
+      throw new Error("A product with this title already exists.");
+    }
 
-  const payload = build_product_payload(product_input);
-  await setDoc(doc(db, "products", product_id), payload, { merge: false });
-  return { id: product_id, ...payload };
+    const payload = build_product_payload(product_input);
+    payload.active = true;
+    await setDoc(doc(db, "products", product_id), payload, { merge: false });
+    return { id: product_id, ...payload };
+  } catch (error) {
+    if (error instanceof Error && !error.code) {
+      throw error;
+    }
+    throw new Error(format_products_write_error(error, "Could not create product."));
+  }
 }
 
 export async function update_product(product_id, product_input) {
@@ -503,9 +549,17 @@ export async function update_product(product_id, product_input) {
     throw new Error("Product not found.");
   }
 
-  const payload = build_product_payload(product_input);
-  await setDoc(doc(db, "products", product_id), payload, { merge: true });
-  return { id: product_id, ...payload };
+  try {
+    const payload = build_product_payload(product_input);
+    payload.active = true;
+    await setDoc(doc(db, "products", product_id), payload, { merge: false });
+    return { id: product_id, ...payload };
+  } catch (error) {
+    if (error instanceof Error && !error.code) {
+      throw error;
+    }
+    throw new Error(format_products_write_error(error, "Could not update product."));
+  }
 }
 
 export async function delete_product(product_id) {
@@ -513,9 +567,13 @@ export async function delete_product(product_id) {
     throw new Error("Product not found.");
   }
 
-  await setDoc(
-    doc(db, "products", product_id),
-    { active: false, updated_at: Date.now() },
-    { merge: true }
-  );
+  try {
+    await setDoc(
+      doc(db, "products", product_id),
+      { active: false, updated_at: Date.now() },
+      { merge: true }
+    );
+  } catch (error) {
+    throw new Error(format_products_write_error(error, "Could not delete product."));
+  }
 }

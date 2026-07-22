@@ -53,11 +53,15 @@ export function AdminProvider({ children }) {
       const credential = await signInWithEmailAndPassword(auth, email, password);
       if (!is_admin_email(credential.user.email)) {
         await signOut(auth);
+        record_failed_login();
         throw new Error(map_auth_error());
       }
       clear_login_attempts();
       return credential.user;
     } catch (error) {
+      if (!error?.code) {
+        throw error instanceof Error ? error : new Error(map_auth_error());
+      }
       record_failed_login();
       throw new Error(map_auth_error());
     }

@@ -16,6 +16,7 @@ export function ProductsCatalogProvider({ children }) {
   const [loading, set_loading] = useState(true);
   const inflight_ref = useRef(null);
   const products_ref = useRef(products);
+  const request_id_ref = useRef(0);
 
   products_ref.current = products;
 
@@ -24,23 +25,33 @@ export function ProductsCatalogProvider({ children }) {
       return products_ref.current;
     }
 
-    if (inflight_ref.current) {
+    if (!force && inflight_ref.current) {
       return inflight_ref.current;
     }
 
+    const request_id = request_id_ref.current + 1;
+    request_id_ref.current = request_id;
     set_loading(true);
 
     const request = fetch_products()
       .then((data) => {
-        set_products(data);
-        set_loading(false);
-        inflight_ref.current = null;
+        if (request_id_ref.current === request_id) {
+          set_products(data);
+          set_loading(false);
+        }
+        if (inflight_ref.current === request) {
+          inflight_ref.current = null;
+        }
         return data;
       })
       .catch(() => {
-        set_loading(false);
-        inflight_ref.current = null;
-        return [];
+        if (request_id_ref.current === request_id) {
+          set_loading(false);
+        }
+        if (inflight_ref.current === request) {
+          inflight_ref.current = null;
+        }
+        return products_ref.current;
       });
 
     inflight_ref.current = request;
@@ -56,14 +67,19 @@ export function ProductsCatalogProvider({ children }) {
     return load_products(true);
   }, [load_products]);
 
+  const remove_product_locally = useCallback((product_id) => {
+    set_products((prev) => prev.filter((product) => product.id !== product_id));
+  }, []);
+
   const value = useMemo(
     () => ({
       products,
       loading,
       load_products,
       refresh_products,
+      remove_product_locally,
     }),
-    [products, loading, load_products, refresh_products]
+    [products, loading, load_products, refresh_products, remove_product_locally]
   );
 
   return (

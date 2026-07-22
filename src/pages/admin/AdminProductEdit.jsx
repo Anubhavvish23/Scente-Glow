@@ -3,15 +3,19 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import AdminDeleteProductButton from "../../components/admin/AdminDeleteProductButton";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminProductForm from "../../components/admin/AdminProductForm";
+import { useProductsCatalog } from "../../context/ProductsCatalogContext";
 import "./Admin.css";
 
 function AdminProductEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { refresh_products, remove_product_locally } = useProductsCatalog();
   const [product_name, set_product_name] = useState("");
 
-  const handle_deleted = () => {
+  const handle_deleted = async (product_id) => {
+    remove_product_locally(product_id || id);
     navigate("/admin/products");
+    await refresh_products();
   };
 
   return (

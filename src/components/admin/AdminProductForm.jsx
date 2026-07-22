@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { create_product, fetch_product_by_id, update_product } from "../../api/products";
 import { useProductsCatalog } from "../../context/ProductsCatalogContext";
 import { empty_admin_product_form, product_to_admin_form } from "../../utils/admin_product";
@@ -9,7 +10,7 @@ const empty_image_row = "";
 
 function AdminProductForm({ mode = "create", product_id = "", on_product_loaded, on_created }) {
   const is_edit = mode === "edit";
-  const { refresh_products } = useProductsCatalog();
+  const { products, refresh_products } = useProductsCatalog();
   const [form, set_form] = useState(empty_admin_product_form);
   const [loading, set_loading] = useState(is_edit);
   const [saving, set_saving] = useState(false);
@@ -21,12 +22,20 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
 
   useEffect(() => {
     if (!is_edit || !product_id) {
+      set_loading(false);
       return;
     }
 
     let active = true;
     set_loading(true);
     set_error("");
+
+    const cached = products.find((product) => product.id === product_id);
+    if (cached) {
+      set_form(product_to_admin_form(cached));
+      on_product_loaded?.(cached.name || "");
+      set_loading(false);
+    }
 
     fetch_product_by_id(product_id)
       .then((product) => {
@@ -35,16 +44,18 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
         }
 
         if (!product) {
-          set_error("Product not found.");
+          set_error("Product not found or was deleted.");
+          set_form(empty_admin_product_form);
+          on_product_loaded?.("");
           return;
         }
 
         set_form(product_to_admin_form(product));
         on_product_loaded?.(product.name || "");
       })
-      .catch(() => {
+      .catch((load_error) => {
         if (active) {
-          set_error("Could not load product.");
+          set_error(load_error?.message || "Could not load product.");
         }
       })
       .finally(() => {
@@ -61,6 +72,7 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
   const update_field = (field, value) => {
     set_form((prev) => ({ ...prev, [field]: value }));
     set_saved(false);
+    set_error("");
   };
 
   const toggle_category = (category) => {
@@ -217,6 +229,7 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
         }
         set_form(empty_admin_product_form);
       }
+
       await refresh_products();
       set_saved(true);
     } catch (submit_error) {
@@ -238,6 +251,9 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
     return (
       <div className="sg-admin__panel sg-admin__product">
         <p className="sg-admin__error">{error}</p>
+        <Link to="/admin/products" className="sg-admin__back-link">
+          ← All products
+        </Link>
       </div>
     );
   }
