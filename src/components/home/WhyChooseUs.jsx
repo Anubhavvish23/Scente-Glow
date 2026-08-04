@@ -10,14 +10,14 @@ const reasons = [
   },
   {
     num: "02",
-    title: "Clean, lasting glow",
+    title: "Clean & lasting glow",
     text: "Natural soy wax and lead-free cotton wicks for a soft burn that fills the room without harshness.",
     icon: "leaf",
   },
   {
     num: "03",
     title: "Made to your mood",
-    text: "Choose fragrance, colour, and finishes that feel personal — candles crafted around your ritual.",
+    text: "Choose fragrance, colour and finishes that feel personal — candles crafted around your ritual.",
     icon: "heart",
   },
 ];
@@ -112,7 +112,7 @@ function WhyChooseUs() {
         >
           <p className="sg-why__heading">Why choose us</p>
           <h2 id="sg-why-title" className="sg-why__title">
-            Light made with patience,
+            Light made with patience
             <br />
             kept with feeling.
           </h2>
@@ -140,6 +140,19 @@ function WhyChooseUs() {
             </motion.li>
           ))}
         </motion.ul>
+
+        <motion.div
+          className="sg-why__perfect"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <p className="sg-why__perfect-label">Perfect for</p>
+          <p className="sg-why__perfect-line">
+            ✨ Home Décor • 🎁 Gifts • 💍 Weddings • 🎉 Birthdays • 🏢 Corporate Gifting
+          </p>
+        </motion.div>
       </div>
     </section>
   );

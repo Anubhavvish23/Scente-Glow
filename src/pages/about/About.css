@@ -30,7 +30,12 @@
 .sg-about__hero-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: linear-gradient(
+    to bottom,
+    rgba(20, 16, 12, 0.45) 0%,
+    rgba(20, 16, 12, 0.58) 50%,
+    rgba(20, 16, 12, 0.5) 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,7 +56,8 @@
 }
 
 .sg-about__eyebrow--light {
-  color: rgba(255, 255, 255, 0.7);
+  color: #ffffff;
+  text-shadow: 0 1px 8px rgba(20, 16, 12, 0.45);
 }
 
 .sg-about__eyebrow--center {
@@ -64,20 +70,28 @@
   font-weight: 300;
   font-size: clamp(2.25rem, 5vw, 4.5rem);
   line-height: 1.15;
-  color: #fff;
+  color: #ffffff;
   margin: 0;
   max-width: 48rem;
   margin-inline: auto;
+  text-shadow:
+    0 1px 2px rgba(20, 16, 12, 0.4),
+    0 10px 28px rgba(20, 16, 12, 0.35);
 }
 
 .sg-about__section {
   padding: 96px 6vw;
 }
 
+.sg-about__section--origin {
+  padding: 28px 4vw 20px;
+}
+
 .sg-about__section--card {
   background: var(--sg-page);
   border-top: 1px solid rgba(43, 38, 32, 0.08);
   border-bottom: 1px solid rgba(43, 38, 32, 0.08);
+  padding-top: 48px;
 }
 
 .sg-about__grid {
@@ -89,6 +103,21 @@
   align-items: center;
 }
 
+.sg-about__grid--origin {
+  max-width: 1120px;
+  gap: 40px;
+  align-items: stretch;
+}
+
+.sg-about__origin-copy {
+  text-align: left;
+  max-width: 34rem;
+}
+
+.sg-about__origin-copy .sg-about__eyebrow {
+  margin: 0 0 12px;
+}
+
 .sg-about__heading {
   font-family: var(--sg-font);
   font-size: clamp(1.75rem, 3vw, 2.25rem);
@@ -98,16 +127,34 @@
   color: var(--sg-ink);
 }
 
+.sg-about__heading--origin {
+  margin: 0 0 16px;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  line-height: 1.28;
+  text-wrap: balance;
+}
+
 .sg-about__heading--center {
   text-align: center;
-  margin-bottom: 80px;
+  margin-bottom: 48px;
 }
 
 .sg-about__text {
-  font-size: 1rem;
-  line-height: 1.8;
+  font-size: 0.9375rem;
+  line-height: 1.7;
   color: rgba(43, 38, 32, 0.72);
-  margin: 0 0 24px;
+  margin: 0 0 14px;
+  text-align: left;
+}
+
+.sg-about__origin-copy .sg-about__text {
+  font-size: clamp(1.0625rem, 1.35vw, 1.1875rem);
+  line-height: 1.8;
+  margin: 0 0 18px;
+}
+
+.sg-about__origin-copy .sg-about__text:last-of-type {
+  margin-bottom: 0;
 }
 
 .sg-about__text:last-of-type {
@@ -123,13 +170,26 @@
   aspect-ratio: 1;
 }
 
-.sg-about__parallax--logo {
-  background: var(--sg-page);
+.sg-about__parallax--origin {
+  width: 100%;
+  aspect-ratio: 4 / 4.5;
+  border-radius: 0;
 }
 
-.sg-about__parallax--logo .sg-about__parallax-img {
-  object-fit: contain;
-  padding: 4px;
+.sg-about__parallax--origin .sg-about__parallax-img {
+  transform: none;
+  object-fit: cover;
+  object-position: center;
+}
+
+.sg-about__parallax--tight {
+  border-radius: 0;
+}
+
+.sg-about__parallax--tight .sg-about__parallax-img {
+  transform: scale(1.02);
+  object-fit: cover;
+  object-position: center;
 }
 
 .sg-about__parallax--tall {
@@ -213,8 +273,40 @@
     padding: 144px 8vw;
   }
 
+  .sg-about__section--origin {
+    padding: 32px 5vw 24px;
+  }
+
+  .sg-about__section--card {
+    padding-top: 56px;
+  }
+
   .sg-about__grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .sg-about__grid--origin {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 72px;
+    align-items: stretch;
+  }
+
+  .sg-about__origin-copy,
+  .sg-about__parallax--origin {
+    margin-top: 10%;
+  }
+
+  .sg-about__origin-copy .sg-about__text {
+    font-size: 1.125rem;
+    line-height: 1.85;
+    margin-bottom: 20px;
+  }
+
+  .sg-about__parallax--origin {
+    aspect-ratio: unset;
+    height: 90%;
+    min-height: 0;
+    align-self: start;
   }
 
   .sg-about__values-grid {

@@ -59,20 +59,19 @@
   height: 24px;
 }
 
-.sg-footer__logo-link {
+.sg-footer__brand-name {
   display: inline-block;
-  line-height: 0;
-  transition: opacity 0.3s ease;
+  font-family: var(--sg-logo-font);
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--sg-ink);
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-.sg-footer__logo-link:hover {
-  opacity: 0.82;
-}
-
-.sg-footer__logo {
-  width: min(160px, 36vw);
-  height: auto;
-  display: block;
+.sg-footer__brand-name:hover {
+  color: var(--sg-gold);
 }
 
 .sg-footer__bottom {
@@ -114,10 +113,6 @@
 @media (min-width: 768px) {
   .sg-footer__inner {
     padding: 40px 32px 28px;
-  }
-
-  .sg-footer__logo {
-    width: 200px;
   }
 }
 

@@ -16,12 +16,8 @@ function Footer() {
       <div className="sg-footer__inner">
         <div className="sg-footer__top">
           <div className="sg-footer__brand">
-            <Link to="/" className="sg-footer__logo-link">
-              <img
-                src="/logo.png"
-                alt="Scenté Glow Candle"
-                className="sg-footer__logo"
-              />
+            <Link to="/" className="sg-footer__brand-name">
+              Scenté Glow
             </Link>
 
             <div className="sg-footer__social">
@@ -43,23 +39,23 @@ function Footer() {
               >
                 <WhatsAppIcon />
               </a>
-              <a
-                href="mailto:scenteglow@protonmail.com"
+              <Link
+                to="/contact"
                 className="sg-footer__social-link"
                 aria-label="Email"
               >
                 <EmailIcon />
-              </a>
+              </Link>
             </div>
           </div>
         </div>
 
-        <div className="sg-footer__bottom">
+
           <p className="sg-footer__copy">
             &copy; {current_year} ScentéGlow Candle.  All rights reserved.
           </p>
         </div>
-      </div>
+      
     </footer>
   );
 }

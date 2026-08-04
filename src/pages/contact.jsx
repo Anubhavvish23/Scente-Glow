@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Footer from "../components/footer/Footer";
+import { send_contact_message } from "../api/contact";
 import { useToast } from "../context/ToastContext";
 import {
   EmailIcon,
@@ -10,7 +11,6 @@ import "./Contact.css";
 
 const instagram_url = "https://www.instagram.com/scente.glow/";
 const whatsapp_url = "https://wa.me/917406903913";
-const contact_email = "hello@scenteglow.com";
 
 const subject_options = [
   "Order Enquiry",
@@ -27,32 +27,42 @@ const initial_form = {
 
 function Contact() {
   const { show_toast } = useToast();
+  const form_panel_ref = useRef(null);
+  const email_input_ref = useRef(null);
   const [form, set_form] = useState(initial_form);
   const [submitting, set_submitting] = useState(false);
+  const [sent, set_sent] = useState(false);
 
   const handle_change = (event) => {
     const { name, value } = event.target;
     set_form((prev) => ({ ...prev, [name]: value }));
+    set_sent(false);
   };
 
-  const handle_submit = (event) => {
+  const handle_email_click = (event) => {
+    event.preventDefault();
+    form_panel_ref.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    window.setTimeout(() => {
+      email_input_ref.current?.focus();
+    }, 280);
+  };
+
+  const handle_submit = async (event) => {
     event.preventDefault();
     set_submitting(true);
+    set_sent(false);
 
-    const body_lines = [
-      `Email: ${form.email}`,
-      `Subject: ${form.subject}`,
-      "",
-      form.message,
-    ];
-
-    const mailto_url = `mailto:${contact_email}?subject=${encodeURIComponent(
-      `Scenté Glow — ${form.subject}`
-    )}&body=${encodeURIComponent(body_lines.join("\n"))}`;
-
-    window.location.href = mailto_url;
-    show_toast("Opening your email app to send the message");
-    set_submitting(false);
+    try {
+      await send_contact_message(form);
+      set_form(initial_form);
+      set_sent(true);
+      show_toast("Message sent");
+      window.setTimeout(() => set_sent(false), 3200);
+    } catch {
+      set_sent(false);
+    } finally {
+      set_submitting(false);
+    }
   };
 
   return (
@@ -63,8 +73,8 @@ function Contact() {
             <p className="sg-contact__eyebrow">Get in touch</p>
             <h1 className="sg-contact__title">We would love to hear from you.</h1>
             <p className="sg-contact__lead">
-              Questions about an order, a custom fragrance, or our collections — reach us below
-              or send a message.
+              Questions about an order, a custom fragrance, or our collections — tap below to
+              open Instagram or WhatsApp, or send a message with the form.
             </p>
 
             <div className="sg-contact__details">
@@ -79,7 +89,7 @@ function Contact() {
                 </span>
                 <span className="sg-contact__detail-text">
                   <span className="sg-contact__detail-label">Instagram</span>
-        
+         
                 </span>
               </a>
 
@@ -94,23 +104,26 @@ function Contact() {
                 </span>
                 <span className="sg-contact__detail-text">
                   <span className="sg-contact__detail-label">WhatsApp</span>
-           
                 </span>
               </a>
 
-              <a href={`mailto:${contact_email}`} className="sg-contact__detail-row">
+              <button
+                type="button"
+                className="sg-contact__detail-row sg-contact__detail-row--button"
+                onClick={handle_email_click}
+                aria-label="Write an email with the form"
+              >
                 <span className="sg-contact__detail-icon" aria-hidden="true">
                   <EmailIcon />
                 </span>
                 <span className="sg-contact__detail-text">
                   <span className="sg-contact__detail-label">Email</span>
-                
                 </span>
-              </a>
+              </button>
             </div>
           </div>
 
-          <div className="sg-contact__form-panel">
+          <div className="sg-contact__form-panel" ref={form_panel_ref}>
             <form className="sg-contact__form" onSubmit={handle_submit}>
               <div className="sg-contact__form-grid">
                 <div className="sg-contact__field">
@@ -119,6 +132,7 @@ function Contact() {
                   </label>
                   <input
                     id="contact-email"
+                    ref={email_input_ref}
                     type="email"
                     name="email"
                     value={form.email}
@@ -170,10 +184,14 @@ function Contact() {
                 className="sg-contact__submit"
                 disabled={submitting}
               >
-                Send Message
+                {submitting ? "Sending..." : "Send Message"}
               </button>
 
-              <p className="sg-contact__form-note">We typically respond within 24 hours</p>
+              {sent && (
+                <p className="sg-contact__sent" role="status">
+                  Message sent
+                </p>
+              )}
             </form>
           </div>
         </div>

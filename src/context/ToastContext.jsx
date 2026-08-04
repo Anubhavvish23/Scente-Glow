@@ -14,7 +14,13 @@ export function ToastProvider({ children }) {
     set_toast(null);
   }, []);
 
-  const value = useMemo(() => ({ show_toast }), [show_toast]);
+  const value = useMemo(
+    () => ({
+      show_toast,
+      hide_toast,
+    }),
+    [show_toast, hide_toast]
+  );
 
   return (
     <ToastContext.Provider value={value}>

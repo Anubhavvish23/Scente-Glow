@@ -72,8 +72,19 @@
 }
 
 .sg-contact__detail-row:hover .sg-contact__detail-icon,
-.sg-contact__detail-row:hover .sg-contact__detail-value {
+.sg-contact__detail-row:hover .sg-contact__detail-hint {
   color: var(--sg-gold);
+}
+
+.sg-contact__detail-row--button {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid rgba(43, 38, 32, 0.1);
+  background: transparent;
+  padding: 11px 0;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
 }
 
 .sg-contact__detail-icon {
@@ -111,10 +122,10 @@
   color: rgba(43, 38, 32, 0.5);
 }
 
-.sg-contact__detail-value {
+.sg-contact__detail-hint {
   font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
-  font-size: 0.9375rem;
-  color: var(--sg-ink);
+  font-size: 0.8125rem;
+  color: rgba(43, 38, 32, 0.45);
   transition: color 0.3s ease;
 }
 
@@ -221,6 +232,28 @@
 .sg-contact__submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.sg-contact__sent {
+  margin: 12px 0 0;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #2f6b3b;
+  text-align: center;
+  animation: sgContactSentIn 0.28s ease;
+}
+
+@keyframes sgContactSentIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .sg-contact__form-note {

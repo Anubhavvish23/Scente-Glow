@@ -3,7 +3,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     function is_admin() {
       return request.auth != null
-        && request.auth.token.email == "scenteglow@protonmail.com";
+        && request.auth.token.email == "scenteglow99@gmail.com";
     }
 
     match /products/{productId} {
@@ -19,6 +19,11 @@ service cloud.firestore {
     match /stats/{docId} {
       allow read: if is_admin();
       allow write: if true;
+    }
+
+    match /contact_messages/{messageId} {
+      allow create: if true;
+      allow read, update, delete: if is_admin();
     }
   }
 }

@@ -5,7 +5,6 @@ import Footer from "../../components/footer/Footer";
 import "./About.css";
 
 const about_img = "/about/e1256a022_generated_bebe330e.png";
-const detail_img = "/logo.png";
 const lifestyle_img = "/about/b96c96116_generated_a1986ec2.png";
 
 const values = [
@@ -60,30 +59,34 @@ function About() {
         </div>
       </section>
 
-      <section className="sg-about__section">
+      <section className="sg-about__section sg-about__section--origin">
         <div className="sg-about__grid sg-about__grid--origin">
-          <div>
+          <div className="sg-about__origin-copy">
             <p className="sg-about__eyebrow">The Beginning</p>
-            <h2 className="sg-about__heading">
+            <h2 className="sg-about__heading sg-about__heading--origin">
               What started as a quiet ritual became a lifelong pursuit.
             </h2>
             <p className="sg-about__text">
-              Scenté Glow was born in a small sun-filled studio in the south of France, where our
-              founder first discovered the alchemy of wax and fragrance. What began as evening
-              experiments — melting beeswax, blending essential oils, watching flame dance —
-              slowly became an obsession with light itself.
+              Scenté Glow began with a simple passion—to create candles that make everyday moments
+              feel warm, comforting and memorable.
             </p>
             <p className="sg-about__text">
-              Today, every Scenté Glow candle is still hand-poured in small batches, using 100%
-              natural soy wax, lead-free cotton wicks, and fragrance oils sourced from the finest
-              perfumeries in Grasse. We believe that the act of lighting a candle should feel like
-              a ceremony — a moment of pause in an otherwise hurried world.
+              Every candle is handcrafted in small batches using 100% natural soy wax, premium
+              fragrance oils and carefully selected materials to ensure a clean long-lasting burn.
+              We believe a candle is more than décor—it's a way to celebrate milestones, create
+              cozy evenings and turn everyday moments into cherished memories.
+            </p>
+            <p className="sg-about__text">
+              Whether it's a thoughtful gift, a festive hamper or a quiet evening at home, every
+              Scenté Glow creation is made with care, creativity and attention to detail. Our
+              mission is simple - to bring warmth, beauty and a touch of luxury into every space
+              and every celebration.
             </p>
           </div>
           <ParallaxSection
-            src={detail_img}
-            alt="Scenté Glow"
-            className="sg-about__parallax--square sg-about__parallax--logo"
+            src={lifestyle_img}
+            alt="Hand-poured Scenté Glow candle"
+            className="sg-about__parallax--origin"
           />
         </div>
       </section>
