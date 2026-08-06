@@ -2,9 +2,14 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { default_sale_banner_settings } from "../utils/coupons";
 import { default_fragrances, normalize_fragrances } from "../utils/fragrances";
+import {
+  default_product_categories,
+  normalize_categories,
+} from "../utils/product_categories";
 
 const settings_doc_id = "sale_banner";
 const fragrances_doc_id = "fragrances";
+const categories_doc_id = "categories";
 
 export async function fetch_sale_banner_settings() {
   try {
@@ -67,6 +72,36 @@ export async function save_fragrances(items) {
 
   await setDoc(
     doc(db, "settings", fragrances_doc_id),
+    { items: normalized, updated_at: Date.now() },
+    { merge: true }
+  );
+
+  return normalized;
+}
+
+export async function fetch_categories() {
+  try {
+    const snapshot = await getDoc(doc(db, "settings", categories_doc_id));
+    if (!snapshot.exists()) {
+      return default_product_categories;
+    }
+
+    const items = normalize_categories(snapshot.data()?.items);
+    return items.length > 0 ? items : default_product_categories;
+  } catch {
+    return default_product_categories;
+  }
+}
+
+export async function save_categories(items) {
+  const normalized = normalize_categories(items);
+
+  if (normalized.length === 0) {
+    throw new Error("Add at least one category.");
+  }
+
+  await setDoc(
+    doc(db, "settings", categories_doc_id),
     { items: normalized, updated_at: Date.now() },
     { merge: true }
   );

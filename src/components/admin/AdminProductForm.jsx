@@ -4,13 +4,22 @@ import { create_product, fetch_product_by_id, update_product } from "../../api/p
 import { useProductsCatalog } from "../../context/ProductsCatalogContext";
 import { empty_admin_product_form, product_to_admin_form } from "../../utils/admin_product";
 import { normalize_hex } from "../../utils/colours";
-import { product_category_options } from "../../utils/product_categories";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
+import {
+  default_product_categories,
+  normalize_categories,
+} from "../../utils/product_categories";
 
 const empty_image_row = "";
 
 function AdminProductForm({ mode = "create", product_id = "", on_product_loaded, on_created }) {
   const is_edit = mode === "edit";
   const { products, refresh_products } = useProductsCatalog();
+  const { categories: site_categories } = useSiteSettings();
+  const category_options = normalize_categories([
+    ...(site_categories?.length > 0 ? site_categories : default_product_categories),
+    ...form.categories,
+  ]);
   const [form, set_form] = useState(empty_admin_product_form);
   const [loading, set_loading] = useState(is_edit);
   const [saving, set_saving] = useState(false);
@@ -656,7 +665,7 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
       <div className="sg-admin__field">
         <span className="sg-admin__label">Categories</span>
         <div className="sg-admin__categories">
-          {product_category_options.map((category) => {
+          {category_options.map((category) => {
             const is_active = form.categories.includes(category);
 
             return (

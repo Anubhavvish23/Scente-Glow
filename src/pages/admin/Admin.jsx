@@ -4,6 +4,7 @@ import { useSiteSettings } from "../../context/SiteSettingsContext";
 import { useProductsCatalog } from "../../context/ProductsCatalogContext";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminFragranceSection from "../../components/admin/AdminFragranceSection";
+import AdminCategorySection from "../../components/admin/AdminCategorySection";
 import AdminStatsSection from "../../components/admin/AdminStatsSection";
 import "./Admin.css";
 
@@ -103,6 +104,8 @@ function Admin() {
       </form>
 
       <AdminFragranceSection />
+
+      <AdminCategorySection />
 
       <AdminStatsSection />
 
