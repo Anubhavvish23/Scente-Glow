@@ -5,6 +5,7 @@ import {
   paginate_shop_products,
 } from "../utils/shop_products";
 import { useProductsCatalog } from "../context/ProductsCatalogContext";
+import { useSiteSettings } from "../context/SiteSettingsContext";
 
 const default_page_size = 12;
 
@@ -16,12 +17,13 @@ export function useShopCatalog({
   page_size = default_page_size,
 }) {
   const { products, loading } = useProductsCatalog();
+  const { categories: managed_categories } = useSiteSettings();
   const [current_page, set_current_page] = useState(1);
   const skip_page_scroll_ref = useRef(true);
 
   const categories = useMemo(
-    () => build_shop_categories(products, embedded),
-    [products, embedded]
+    () => build_shop_categories(products, embedded, managed_categories),
+    [products, embedded, managed_categories]
   );
 
   const filtered_products = useMemo(

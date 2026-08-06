@@ -1,15 +1,28 @@
 import {
   collect_product_categories,
   get_product_category_label,
+  normalize_categories,
   product_matches_category,
 } from "./product_categories";
 
-export function build_shop_categories(products, embedded = false) {
+export function build_shop_categories(products, embedded = false, managed_categories = []) {
   if (embedded) {
     return [];
   }
 
-  return ["All", ...collect_product_categories(products)];
+  const from_products = collect_product_categories(products);
+  const managed = normalize_categories(managed_categories);
+
+  if (managed.length === 0) {
+    return ["All", ...from_products];
+  }
+
+  const managed_keys = new Set(managed.map((category) => category.toLowerCase()));
+  const extras = from_products.filter(
+    (category) => !managed_keys.has(category.toLowerCase())
+  );
+
+  return ["All", ...managed, ...extras];
 }
 
 export function filter_shop_products(
