@@ -77,6 +77,43 @@
   box-sizing: border-box;
 }
 
+.sg-admin-login-modal__password-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.sg-admin-login-modal__input--password {
+  padding-right: 46px;
+}
+
+.sg-admin-login-modal__toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(43, 38, 32, 0.55);
+  cursor: pointer;
+}
+
+.sg-admin-login-modal__toggle-password:hover:not(:disabled) {
+  color: var(--sg-ink);
+  background: rgba(43, 38, 32, 0.06);
+}
+
+.sg-admin-login-modal__toggle-password:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .sg-admin-login-modal__input:focus {
   outline: none;
   border-color: var(--sg-gold);
