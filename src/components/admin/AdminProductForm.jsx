@@ -16,10 +16,6 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
   const is_edit = mode === "edit";
   const { products, refresh_products } = useProductsCatalog();
   const { categories: site_categories } = useSiteSettings();
-  const category_options = normalize_categories([
-    ...(site_categories?.length > 0 ? site_categories : default_product_categories),
-    ...form.categories,
-  ]);
   const [form, set_form] = useState(empty_admin_product_form);
   const [loading, set_loading] = useState(is_edit);
   const [saving, set_saving] = useState(false);
@@ -28,6 +24,11 @@ function AdminProductForm({ mode = "create", product_id = "", on_product_loaded,
   const [new_colour_name, set_new_colour_name] = useState("");
   const [new_colour_hex, set_new_colour_hex] = useState("#f4a6c1");
   const [new_fragrance, set_new_fragrance] = useState("");
+
+  const category_options = normalize_categories([
+    ...(site_categories?.length > 0 ? site_categories : default_product_categories),
+    ...(form.categories || []),
+  ]);
 
   useEffect(() => {
     if (!is_edit || !product_id) {

@@ -50,12 +50,12 @@ function Footer() {
           </div>
         </div>
 
-
+        <div className="sg-footer__bottom">
           <p className="sg-footer__copy">
-            &copy; {current_year} ScentéGlow Candle.  All rights reserved.
+            &copy; {current_year} ScentéGlow Candle. All rights reserved.
           </p>
         </div>
-      
+      </div>
     </footer>
   );
 }
