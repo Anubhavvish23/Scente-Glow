@@ -12,6 +12,11 @@
   align-items: center;
 }
 
+.sg-hero__bg-stack {
+  position: absolute;
+  inset: 0;
+}
+
 .sg-hero__bg {
   position: absolute;
   inset: 0;
@@ -20,7 +25,13 @@
   background-position: calc(38% + 45px) calc(50% + 10px);
   transform-origin: calc(38% + 45px) calc(50% + 10px);
   animation: sgKenBurns 7s linear infinite alternate;
-  will-change: transform;
+  will-change: transform, opacity;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.sg-hero__bg--active {
+  opacity: 1;
 }
 
 @keyframes sgKenBurns {

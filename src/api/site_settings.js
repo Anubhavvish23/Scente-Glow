@@ -6,10 +6,12 @@ import {
   default_product_categories,
   normalize_categories,
 } from "../utils/product_categories";
+import { default_hero_cover, normalize_hero_cover } from "../utils/hero_cover";
 
 const settings_doc_id = "sale_banner";
 const fragrances_doc_id = "fragrances";
 const categories_doc_id = "categories";
+const hero_cover_doc_id = "hero_cover";
 
 export async function fetch_sale_banner_settings() {
   try {
@@ -103,6 +105,35 @@ export async function save_categories(items) {
   await setDoc(
     doc(db, "settings", categories_doc_id),
     { items: normalized, updated_at: Date.now() },
+    { merge: true }
+  );
+
+  return normalized;
+}
+
+export async function fetch_hero_cover() {
+  try {
+    const snapshot = await getDoc(doc(db, "settings", hero_cover_doc_id));
+    if (!snapshot.exists()) {
+      return default_hero_cover;
+    }
+
+    return normalize_hero_cover(snapshot.data());
+  } catch {
+    return default_hero_cover;
+  }
+}
+
+export async function save_hero_cover(settings) {
+  const normalized = normalize_hero_cover(settings);
+
+  if (!normalized.cover_image) {
+    throw new Error("Cover image is required.");
+  }
+
+  await setDoc(
+    doc(db, "settings", hero_cover_doc_id),
+    { ...normalized, updated_at: Date.now() },
     { merge: true }
   );
 

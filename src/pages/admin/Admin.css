@@ -282,6 +282,14 @@
   box-sizing: border-box;
 }
 
+.sg-admin__hero-cover {
+  margin-bottom: 20px;
+}
+
+.sg-admin__hero-cover .sg-admin__muted {
+  margin: 0 0 14px;
+}
+
 .sg-admin__fragrances {
   margin-bottom: 20px;
 }

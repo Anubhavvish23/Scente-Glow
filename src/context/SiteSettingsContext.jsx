@@ -2,9 +2,11 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import {
   fetch_categories,
   fetch_fragrances,
+  fetch_hero_cover,
   fetch_sale_banner_settings,
   save_categories,
   save_fragrances,
+  save_hero_cover,
   save_sale_banner_settings,
 } from "../api/site_settings";
 import {
@@ -14,6 +16,7 @@ import {
 } from "../utils/coupons";
 import { default_fragrances } from "../utils/fragrances";
 import { default_product_categories } from "../utils/product_categories";
+import { default_hero_cover } from "../utils/hero_cover";
 
 const SiteSettingsContext = createContext(null);
 
@@ -23,6 +26,7 @@ export function SiteSettingsProvider({ children }) {
   );
   const [fragrances, set_fragrances] = useState(default_fragrances);
   const [categories, set_categories] = useState(default_product_categories);
+  const [hero_cover, set_hero_cover] = useState(default_hero_cover);
   const [loading, set_loading] = useState(true);
 
   useEffect(() => {
@@ -32,12 +36,14 @@ export function SiteSettingsProvider({ children }) {
       fetch_sale_banner_settings(),
       fetch_fragrances(),
       fetch_categories(),
+      fetch_hero_cover(),
     ])
-      .then(([banner_settings, fragrance_items, category_items]) => {
+      .then(([banner_settings, fragrance_items, category_items, hero_settings]) => {
         if (active) {
           set_sale_banner_settings(banner_settings);
           set_fragrances(fragrance_items);
           set_categories(category_items);
+          set_hero_cover(hero_settings);
           set_loading(false);
         }
       })
@@ -84,6 +90,12 @@ export function SiteSettingsProvider({ children }) {
     return saved;
   }, []);
 
+  const update_hero_cover = useCallback(async (next_settings) => {
+    const saved = await save_hero_cover(next_settings);
+    set_hero_cover(saved);
+    return saved;
+  }, []);
+
   const value = useMemo(
     () => ({
       loading,
@@ -92,9 +104,11 @@ export function SiteSettingsProvider({ children }) {
       coupon_map,
       fragrances,
       categories,
+      hero_cover,
       update_sale_banner,
       update_fragrances,
       update_categories,
+      update_hero_cover,
     }),
     [
       loading,
@@ -103,9 +117,11 @@ export function SiteSettingsProvider({ children }) {
       coupon_map,
       fragrances,
       categories,
+      hero_cover,
       update_sale_banner,
       update_fragrances,
       update_categories,
+      update_hero_cover,
     ]
   );
 

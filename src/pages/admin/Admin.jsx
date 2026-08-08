@@ -5,6 +5,7 @@ import { useProductsCatalog } from "../../context/ProductsCatalogContext";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminFragranceSection from "../../components/admin/AdminFragranceSection";
 import AdminCategorySection from "../../components/admin/AdminCategorySection";
+import AdminHeroCoverSection from "../../components/admin/AdminHeroCoverSection";
 import AdminStatsSection from "../../components/admin/AdminStatsSection";
 import "./Admin.css";
 
@@ -102,6 +103,8 @@ function Admin() {
           {error && <span className="sg-admin__error">{error}</span>}
         </div>
       </form>
+
+      <AdminHeroCoverSection />
 
       <AdminFragranceSection />
 
