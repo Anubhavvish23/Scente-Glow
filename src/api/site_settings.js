@@ -127,14 +127,14 @@ export async function fetch_hero_cover() {
 export async function save_hero_cover(settings) {
   const normalized = normalize_hero_cover(settings);
 
-  if (!normalized.cover_image) {
-    throw new Error("Cover image is required.");
+  if (normalized.images.length === 0) {
+    throw new Error("Add at least one cover image.");
   }
 
   await setDoc(
     doc(db, "settings", hero_cover_doc_id),
     { ...normalized, updated_at: Date.now() },
-    { merge: true }
+    { merge: false }
   );
 
   return normalized;

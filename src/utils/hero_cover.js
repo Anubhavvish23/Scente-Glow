@@ -1,22 +1,27 @@
 import { resolve_product_image_url } from "./google_drive";
 
 export const default_hero_cover = {
-  cover_image: "/homepage.png",
-  second_image: "",
+  images: ["/homepage.png"],
 };
 
 export function normalize_hero_cover(settings = {}) {
-  const cover_image =
-    resolve_product_image_url(settings.cover_image) || default_hero_cover.cover_image;
-  const second_image = resolve_product_image_url(settings.second_image);
+  let raw_images = [];
+
+  if (Array.isArray(settings.images) && settings.images.length > 0) {
+    raw_images = settings.images;
+  } else {
+    raw_images = [settings.cover_image, settings.second_image].filter(Boolean);
+  }
+
+  const images = raw_images
+    .map((item) => resolve_product_image_url(item))
+    .filter(Boolean);
 
   return {
-    cover_image,
-    second_image,
+    images: images.length > 0 ? images : [...default_hero_cover.images],
   };
 }
 
 export function get_hero_cover_images(settings = default_hero_cover) {
-  const normalized = normalize_hero_cover(settings);
-  return [normalized.cover_image, normalized.second_image].filter(Boolean);
+  return normalize_hero_cover(settings).images;
 }
