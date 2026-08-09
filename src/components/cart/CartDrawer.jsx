@@ -22,7 +22,7 @@ function CartDrawer() {
     cart_open,
     close_cart,
     remove_from_cart,
-    update_quantity,
+    adjust_quantity,
     apply_coupon,
     remove_coupon,
     is_gift,
@@ -50,8 +50,22 @@ function CartDrawer() {
     gift_note,
   });
 
-  const handle_whatsapp_order = () => {
+  const handle_whatsapp_order = (event) => {
+    if (has_sold_out_items) {
+      event.preventDefault();
+      return;
+    }
+
+    event.preventDefault();
     track_whatsapp_order();
+    const order_url = get_whatsapp_order_url(cart_items, cart_total, {
+      cart_subtotal,
+      coupon_code,
+      cart_discount,
+      is_gift,
+      gift_note,
+    });
+    window.open(order_url, "_blank", "noopener,noreferrer");
   };
 
   const handle_open_product = useCallback(
@@ -141,9 +155,9 @@ function CartDrawer() {
                       <button
                         type="button"
                         onClick={() =>
-                          update_quantity(
+                          adjust_quantity(
                             item.product_id,
-                            item.quantity - 1,
+                            -1,
                             item.fragrance,
                             item.customization,
                             item.bulk_pack
@@ -156,9 +170,9 @@ function CartDrawer() {
                       <button
                         type="button"
                         onClick={() =>
-                          update_quantity(
+                          adjust_quantity(
                             item.product_id,
-                            item.quantity + 1,
+                            1,
                             item.fragrance,
                             item.customization,
                             item.bulk_pack
@@ -260,7 +274,7 @@ function CartDrawer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`sg-cart__whatsapp${has_sold_out_items ? " sg-cart__whatsapp--disabled" : ""}`}
-                onClick={has_sold_out_items ? (event) => event.preventDefault() : handle_whatsapp_order}
+                onClick={handle_whatsapp_order}
                 aria-disabled={has_sold_out_items}
               >
                 Order by WhatsApp

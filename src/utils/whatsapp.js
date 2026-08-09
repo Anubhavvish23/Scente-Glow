@@ -23,18 +23,24 @@ function format_fragrance_line(fragrance, scent = "") {
   return "Fragrance: Not selected";
 }
 
+function get_item_quantity(item) {
+  const quantity = Number(item?.quantity);
+  return Number.isFinite(quantity) && quantity > 0 ? quantity : 1;
+}
+
 export function build_whatsapp_order_message(cart_items, cart_total, options = {}) {
   const { cart_subtotal, coupon_code, cart_discount, is_gift, gift_note } = options;
   const item_lines = cart_items.flatMap((item, index) => {
-    const line_total = item.price * item.quantity;
+    const quantity = get_item_quantity(item);
+    const line_total = item.price * quantity;
     const customization_lines = format_customization_whatsapp_lines(item.customization);
     const bulk_pack_summary = format_bulk_pack_summary(item.bulk_pack);
     return [
-      `${index + 1}. ${item.name}`,
+      `${index + 1}. ${item.name} x ${quantity}`,
       `   ${format_fragrance_line(item.fragrance, item.scent)}`,
       ...(bulk_pack_summary ? [`   ${bulk_pack_summary}`] : []),
       ...customization_lines.map((line) => `   ${line}`),
-      `   Qty: ${item.quantity} - ${format_price(line_total)}`,
+      `   Qty: ${quantity} - ${format_price(line_total)}`,
       "",
     ];
   });
@@ -96,10 +102,12 @@ export function get_whatsapp_product_url(
     return null;
   }
 
-  const { is_gift = false, gift_note = "" } = options;
+  const { is_gift = false, gift_note = "", quantity = 1 } = options;
+  const order_quantity = get_item_quantity({ quantity });
   const customization_lines = format_customization_whatsapp_lines(customization);
   const bulk_pack_summary = format_bulk_pack_summary(bulk_pack);
-  const price = get_line_price(product, bulk_pack);
+  const unit_price = get_line_price(product, bulk_pack);
+  const line_total = unit_price * order_quantity;
   const gift_lines =
     is_gift || gift_note?.trim()
       ? [
@@ -113,11 +121,11 @@ export function get_whatsapp_product_url(
     "",
     "I would like to order:",
     "",
-    product.name,
+    `${product.name} x ${order_quantity}`,
     ...(fragrance ? [`Fragrance: ${fragrance}`] : []),
     ...(bulk_pack_summary ? [bulk_pack_summary] : []),
     ...customization_lines,
-    `Qty: 1 - ${format_price(price)}`,
+    `Qty: ${order_quantity} - ${format_price(line_total)}`,
     "",
     ...gift_lines,
     "Please confirm availability and delivery details. Thank you!",

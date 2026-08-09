@@ -3,7 +3,9 @@ import ProductPricing from "../pricing/ProductPricing";
 import BulkPackSelector from "./BulkPackSelector";
 import FragranceSelector from "./FragranceSelector";
 import ProductCartControl from "./ProductCartControl";
-import { has_bulk_packs } from "../../utils/bulk_packs";
+import { useCart } from "../../context/CartContext";
+import { bulk_pack_matches, has_bulk_packs } from "../../utils/bulk_packs";
+import { customization_matches } from "../../utils/customization";
 import { has_product_fragrances } from "../../utils/fragrances";
 import {
   default_product_description,
@@ -52,6 +54,7 @@ function ProductDetailPanel({
   selected_bulk_pack,
   on_bulk_pack_change,
 }) {
+  const { cart_items } = useCart();
   const product_has_packs = has_bulk_packs(product);
   const category_label = get_product_category_label(product);
   const details = get_product_details(product);
@@ -59,15 +62,27 @@ function ProductDetailPanel({
     product.details_heading ? ` sg-product-${variant === "page" ? "page" : "sheet"}__details--hearts` : ""
   }`;
 
+  const cart_quantity = useMemo(() => {
+    const cart_item = cart_items.find(
+      (item) =>
+        item.product_id === product.id &&
+        (item.fragrance || "") === (selected_fragrance || "") &&
+        customization_matches(item.customization, customization) &&
+        bulk_pack_matches(item.bulk_pack, selected_bulk_pack)
+    );
+    return cart_item?.quantity || 1;
+  }, [cart_items, product.id, selected_fragrance, customization, selected_bulk_pack]);
+
   const whatsapp_url = useMemo(
     () =>
       get_whatsapp_product_url(
         product,
         selected_fragrance,
         customization,
-        selected_bulk_pack
+        selected_bulk_pack,
+        { quantity: cart_quantity }
       ),
-    [product, selected_fragrance, customization, selected_bulk_pack]
+    [product, selected_fragrance, customization, selected_bulk_pack, cart_quantity]
   );
 
   return (

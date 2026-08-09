@@ -175,6 +175,42 @@ export function CartProvider({ children }) {
     });
   }, []);
 
+  const adjust_quantity = useCallback((
+    product_id,
+    delta,
+    fragrance = "",
+    customization = null,
+    bulk_pack = null
+  ) => {
+    set_cart_items((prev) => {
+      const current_item = prev.find((item) =>
+        matches_cart_line(item, product_id, fragrance, customization, bulk_pack)
+      );
+
+      if (!current_item) {
+        return prev;
+      }
+
+      const next_quantity = current_item.quantity + delta;
+
+      if (next_quantity < 1) {
+        return prev.filter(
+          (item) => !matches_cart_line(item, product_id, fragrance, customization, bulk_pack)
+        );
+      }
+
+      if (current_item.sold_out && delta > 0) {
+        return prev;
+      }
+
+      return prev.map((item) =>
+        matches_cart_line(item, product_id, fragrance, customization, bulk_pack)
+          ? { ...item, quantity: next_quantity }
+          : item
+      );
+    });
+  }, []);
+
   const apply_coupon = useCallback((code) => {
     const normalized = code.trim().toUpperCase();
     const percent = get_coupon_percent(normalized, coupon_map);
@@ -246,6 +282,7 @@ export function CartProvider({ children }) {
       add_to_cart,
       remove_from_cart,
       update_quantity,
+      adjust_quantity,
       apply_coupon,
       remove_coupon,
       clear_cart,
@@ -269,6 +306,7 @@ export function CartProvider({ children }) {
       add_to_cart,
       remove_from_cart,
       update_quantity,
+      adjust_quantity,
       apply_coupon,
       remove_coupon,
       clear_cart,

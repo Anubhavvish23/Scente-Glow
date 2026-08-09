@@ -36,7 +36,7 @@ function ProductCartControl({
   on_customization_change,
   selected_bulk_pack = null,
 }) {
-  const { cart_items, add_to_cart, update_quantity } = useCart();
+  const { cart_items, add_to_cart, adjust_quantity } = useCart();
   const { show_toast } = useToast();
   const [customize_open, set_customize_open] = useState(false);
 
@@ -150,18 +150,17 @@ function ProductCartControl({
   ]);
 
   const handle_minus = useCallback(() => {
-    update_quantity(
+    adjust_quantity(
       product.id,
-      quantity - 1,
+      -1,
       selected_fragrance,
       customization,
       selected_bulk_pack
     );
     release_focus();
   }, [
-    update_quantity,
+    adjust_quantity,
     product.id,
-    quantity,
     selected_fragrance,
     customization,
     selected_bulk_pack,
@@ -177,9 +176,9 @@ function ProductCartControl({
       release_focus();
       return;
     }
-    update_quantity(
+    adjust_quantity(
       product.id,
-      quantity + 1,
+      1,
       selected_fragrance,
       customization,
       selected_bulk_pack
@@ -195,7 +194,7 @@ function ProductCartControl({
     selected_bulk_pack,
     show_toast,
     toast_message,
-    update_quantity,
+    adjust_quantity,
   ]);
 
   const handle_open_customize = useCallback(() => {
