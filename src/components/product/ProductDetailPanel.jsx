@@ -25,7 +25,6 @@ function ProductWhatsappButton({ url, variant }) {
     return (
       <a
         href={url}
-        target="_blank"
         rel="noopener noreferrer"
         className={class_name}
       >

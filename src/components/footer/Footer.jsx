@@ -6,7 +6,7 @@ import {
 } from "../social/SocialIcons";
 import "./Footer.css";
 
-const whatsapp_url = "https://wa.me/917406903913";
+const whatsapp_url = "https://api.whatsapp.com/send?phone=917406903913";
 
 function Footer() {
   const current_year = new Date().getFullYear();

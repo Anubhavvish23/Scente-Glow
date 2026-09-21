@@ -56,16 +56,7 @@ function CartDrawer() {
       return;
     }
 
-    event.preventDefault();
     track_whatsapp_order();
-    const order_url = get_whatsapp_order_url(cart_items, cart_total, {
-      cart_subtotal,
-      coupon_code,
-      cart_discount,
-      is_gift,
-      gift_note,
-    });
-    window.open(order_url, "_blank", "noopener,noreferrer");
   };
 
   const handle_open_product = useCallback(
@@ -271,7 +262,6 @@ function CartDrawer() {
               )}
               <a
                 href={has_sold_out_items ? undefined : whatsapp_url}
-                target="_blank"
                 rel="noopener noreferrer"
                 className={`sg-cart__whatsapp${has_sold_out_items ? " sg-cart__whatsapp--disabled" : ""}`}
                 onClick={handle_whatsapp_order}

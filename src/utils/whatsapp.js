@@ -13,6 +13,11 @@ import { has_product_fragrances } from "./fragrances";
 
 const whatsapp_number = "917406903913";
 
+function build_whatsapp_url(message) {
+  const text = encodeURIComponent(String(message || "").trim());
+  return `https://api.whatsapp.com/send?phone=${whatsapp_number}&text=${text}`;
+}
+
 function format_fragrance_line(fragrance, scent = "") {
   if (fragrance) {
     return `Fragrance: ${fragrance}`;
@@ -76,7 +81,7 @@ export function build_whatsapp_order_message(cart_items, cart_total, options = {
 
 export function get_whatsapp_order_url(cart_items, cart_total, options = {}) {
   const message = build_whatsapp_order_message(cart_items, cart_total, options);
-  return `https://wa.me/${whatsapp_number}?text=${encodeURIComponent(message)}`;
+  return build_whatsapp_url(message);
 }
 
 export function get_whatsapp_product_url(
@@ -131,5 +136,5 @@ export function get_whatsapp_product_url(
     "Please confirm availability and delivery details. Thank you!",
   ].join("\n");
 
-  return `https://wa.me/${whatsapp_number}?text=${encodeURIComponent(message)}`;
+  return build_whatsapp_url(message);
 }

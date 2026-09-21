@@ -10,7 +10,7 @@ import {
 import "./Contact.css";
 
 const instagram_url = "https://www.instagram.com/scente.glow/";
-const whatsapp_url = "https://wa.me/917406903913";
+const whatsapp_url = "https://api.whatsapp.com/send?phone=917406903913";
 
 const subject_options = [
   "Order Enquiry",
