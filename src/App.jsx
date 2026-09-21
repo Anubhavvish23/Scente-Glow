@@ -26,7 +26,11 @@ function App() {
   const is_admin_route = location.pathname.startsWith("/admin");
 
   useEffect(() => {
-    legacy_storage_keys.forEach((key) => localStorage.removeItem(key));
+    try {
+      legacy_storage_keys.forEach((key) => localStorage.removeItem(key));
+    } catch {
+      // ignore private browsing / blocked storage on some phones
+    }
   }, []);
 
   return (
